@@ -1,4 +1,5 @@
 import cloudscraper
+from datetime import datetime
 from pathlib import Path
 import requests
 from rich import print
@@ -10,6 +11,7 @@ HEADERS = {
     'x-requested-with': 'XMLHttpRequest',
 }
 
+LOCALES = ['en', 'de']
 DOWNLOAD_DIR = Path.home() / 'Musik' / 'Blinkist'
 
 scraper = cloudscraper.create_scraper()
@@ -22,12 +24,6 @@ def get_free_daily(locale):
         params={'locale': locale}
     )
     return response.json()
-
-
-# auth ↓
-# auth_req = scraper.get(
-#     'https://www.blinkist.com/api/mickey_mouse/setup?pathname=/en/nc/new-reader/the-4-stages-of-psychological-safety-en&search=&locale=en')
-# print(auth_req.json())
 
 
 def get_chapters(book_slug):
@@ -44,30 +40,33 @@ def get_chapter(book_id, chapter_id):
     return response.json()
 
 
-def download_chapter(chapter_data):
+def download_chapter_audio(book, chapter_data):
+    book_dir = DOWNLOAD_DIR / f"{datetime.today().strftime('%Y-%m-%d')} – {book['slug']}"
+    book_dir.mkdir(exist_ok=True)
+    file_path = book_dir / f"chapter_{chapter_data['order_no']}.m4a"
+
+    if file_path.exists():
+        print(f"Skipping existing file: {file_path}")
+        return
+
     assert 'm4a' in chapter_data['signed_audio_url']
     response = scraper.get(chapter_data['signed_audio_url'])
     assert response.status_code == 200
-
-    file_path = DOWNLOAD_DIR / f"chapter_{chapter_data['order_no']}.m4a"
     file_path.write_bytes(response.content)
     print(f"Downloaded chapter {chapter_data['order_no']}")
 
 
-free_daily = get_free_daily(locale='en')
-book = free_daily['book']
-print("Today's free daily is:", book['title'])
+for locale in LOCALES:
+    free_daily = get_free_daily(locale=locale)
+    book = free_daily['book']
+    print(f"Today's free daily in {locale} is: “{book['title']}”")
 
-chapters = get_chapters(book['slug'])
-print(
-    f"{len(chapters)} chapters:",
-    ', '.join([c['action_title'] for c in chapters]),
-)
+    chapters = get_chapters(book['slug'])
+    print(
+        f"{len(chapters)} chapters:",
+        ', '.join([c['action_title'] for c in chapters]),
+    )
 
-for chapter in chapters:
-    print(chapter['action_title'])
-    chapter_data = get_chapter(book['id'], chapter['id'])
-    print(chapter_data['text'])
-    print(chapter_data['signed_audio_url'])
-    download_chapter(chapter_data)
-    print()
+    for chapter in chapters:
+        chapter_data = get_chapter(book['id'], chapter['id'])
+        download_chapter_audio(book, chapter_data)
