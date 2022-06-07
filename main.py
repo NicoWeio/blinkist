@@ -17,7 +17,6 @@ def get_free_daily(locale):
     return response.json()
 
 
-# free_daily = get_free_daily(locale='de')
 
 # auth ↓
 # auth_req = scraper.get(
@@ -25,9 +24,8 @@ def get_free_daily(locale):
 # print(auth_req.json())
 
 
-def get_chapters():
-    """{book, chapters}"""
-    url = "https://www.blinkist.com/api/books/the-4-stages-of-psychological-safety-en/chapters"
+def get_chapters(book_slug):
+    url = f"https://www.blinkist.com/api/books/{book_slug}/chapters"
 
     payload = {}
     headers = {
@@ -38,15 +36,13 @@ def get_chapters():
 
     response = requests.request("GET", url, headers=headers, data=payload)
     response.raise_for_status()
-    return response.json()
+    return response.json()['chapters']
 
 
-chapters = get_chapters()
-print(chapters)
+free_daily = get_free_daily(locale='en')
+book = free_daily['book']
+print(book['title'])
 
-# r = scraper.get(
-#     'https://www.blinkist.com/api/books/the-4-stages-of-psychological-safety-en/chapters',
-#     verify=True,
-# )
-# r.raise_for_status()
-# print(r.text)
+chapters = get_chapters(book['slug'])
+for chapter in chapters:
+    print(chapter['action_title'])
