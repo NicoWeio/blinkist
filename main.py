@@ -26,21 +26,21 @@ def get_book_dir(book):
 def get_free_daily(locale):
     # see also: https://www.blinkist.com/en/content/daily
     response = scraper.get(
-        BASE_URL + 'api/free_daily',
+        f'{BASE_URL}api/free_daily',
         params={'locale': locale}
     )
     return response.json()
 
 
 def get_chapters(book_slug):
-    url = f"{BASE_URL}/api/books/{book_slug}/chapters"
+    url = f"{BASE_URL}api/books/{book_slug}/chapters"
     response = requests.get(url, headers=HEADERS)
     response.raise_for_status()
     return response.json()['chapters']
 
 
 def get_chapter(book_id, chapter_id):
-    url = f"{BASE_URL}/api/books/{book_id}/chapters/{chapter_id}"
+    url = f"{BASE_URL}api/books/{book_id}/chapters/{chapter_id}"
     response = requests.get(url, headers=HEADERS)
     response.raise_for_status()
     return response.json()
