@@ -18,6 +18,10 @@ DOWNLOAD_DIR = Path.home() / 'Musik' / 'Blinkist'
 scraper = cloudscraper.create_scraper()
 
 
+def get_book_dir(book):
+    return DOWNLOAD_DIR / f"{datetime.today().strftime('%Y-%m-%d')} – {book['slug']}"
+
+
 def get_free_daily(locale):
     # see also: https://www.blinkist.com/en/content/daily
     response = scraper.get(
@@ -42,7 +46,7 @@ def get_chapter(book_id, chapter_id):
 
 
 def download_chapter_audio(book, chapter_data):
-    book_dir = DOWNLOAD_DIR / f"{datetime.today().strftime('%Y-%m-%d')} – {book['slug']}"
+    book_dir = get_book_dir(book)
     book_dir.mkdir(exist_ok=True)
     file_path = book_dir / f"chapter_{chapter_data['order_no']}.m4a"
 
