@@ -40,3 +40,6 @@ jobs:
       - name: See if it runs through…
         run: |
           python main.py
+      - name: Check the directory contents
+        run: |
+          ls -hl /home/runner/Musik/Blinkist/*
