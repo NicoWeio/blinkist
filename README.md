@@ -92,3 +92,67 @@
 }
 ```
 </details>
+
+<details>
+<summary>
+    https://www.blinkist.com/api/books/{book_slug}/chapters
+</summary>
+
+```json
+{
+   "book":{…},
+   "chapters":[
+      {
+         "id":"628223936cee0700089119ca",
+         "order_no":0,
+         "action_title":"What’s in it for me? Learn how to encourage innovation through inclusion in your team or organization."
+      },
+      {
+         "id":"628223936cee0700089119cb",
+         "order_no":1,
+         "action_title":"To create inclusion safety, make sure team members feel unconditionally included from the very beginning."
+      },
+      {
+         "id":"628223936cee0700089119cc",
+         "order_no":2,
+         "action_title":"To provide learner safety, create an environment where failure isn’t just accepted – it’s rewarded."
+      },
+      {
+         "id":"628223936cee0700089119cd",
+         "order_no":3,
+         "action_title":"To provide contributor safety, get to know your team, limit your tell-to-ask ratio, and help colleagues think beyond their roles."
+      },
+      {
+         "id":"628223936cee0700089119ce",
+         "order_no":4,
+         "action_title":"Democratize innovation by fostering challenger safety."
+      },
+      {
+         "id":"628223936cee0700089119cf",
+         "order_no":5,
+         "action_title":"Final summary"
+      }
+   ],
+   "current_chapter_id":"None"
+}
+```
+</details>
+
+<details>
+<summary>
+    https://www.blinkist.com/api/books/{book_id}/chapters/{chapter_id}
+</summary>
+
+```json
+{
+   "id":"628223936cee0700089119ca",
+   "order_no":0,
+   "action_title":"What’s in it for me? Learn how to encourage innovation through inclusion in your team or organization.",
+   "text":"<p>Congrats! You’re in the luxurious position of choosing between two teams you could work with. Let’s go ahead and meet them.</p>\\n<p>\\n </p>\\n<p>This is the first team’s office. Notice that? The air is stiff. [shortened as to not violate their copyright]</p>",
+   "audio_url":"https://hls.blinkist.io/bibs/628223936cee0700089119c9/628223936cee0700089119ca-T1652696046.m4a",
+   "signed_audio_url":"https://hls.blinkist.io/bibs/628223936cee0700089119c9/628223936cee0700089119ca-T1652696046.m4a?Expires=1654621635&Signature=PFcksN0ISh~J6YjzWQKsJYaQUbmW0Cl~ct4qtiIsfDPxrXjyYxorafH~TdCP4bYsjSuuOeDp1BCEkLtO0HWm3EsLc1T5Cv7LRIS7yuuHpR6GK~72DjKDQBPGWx4JZsWv0Au1VegwfYHEU4sFaz9VvahcJg5u3~FufSEhgygTC3SOGpgfsRTIAOfkvXPhet-d~8u0KAHZudHHkBEVl1w804abVfW-30uvxyuSBBViTkI7r74RyJt~ui42mMO8s314vz6wdMNSgLmF-blKDwU0xXTnskIdSOHI~PS6TT4PEQS~pf1KfsUDLrhr8P61TzUHkCZtricCD1udzRLjYLpEzA__&Key-Pair-Id=APKAJXJM6BB7FFZXUB4A"
+}
+```
+</details>
+
+<!-- `https://www.blinkist.com/api/mickey_mouse/setup?…` -->
