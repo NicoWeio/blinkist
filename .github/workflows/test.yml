@@ -34,6 +34,9 @@ jobs:
       # - name: Test with pytest
       #   run: |
       #     pytest
+      - name: Set up the target directory
+        run: |
+          mkdir -p /home/runner/Musik/Blinkist/
       - name: See if it runs through…
         run: |
           python main.py
