@@ -1,6 +1,16 @@
-`https://www.blinkist.com/api/mickey_mouse/setup?…`
+# About this repository
+While https://github.com/ptrstn/dailyblink was temporarily broken (https://github.com/ptrstn/dailyblink/issues/32),
+I wrote my own Blinkist downloader from scratch.
+In contrast to the original, this one relies on Blinkist's API, which might be more stable than scraping with *beautifulsoup*.
 
-# Example data
+## Limitations
+- Downloading arbitrary books with Blinkist Premium is not supported out of the box. It might be easy to get it working, but I didn't test it. There's other tools for that anyway.
+- ID3 tags are not set.
+- As of writing, cover images are not downloaded.
+- The formatting of the markdown export differs a little from @ptrstn's.
+- Apparently, this doesn't work for everyone. [[1]](https://github.com/ptrstn/dailyblink/issues/32#issuecomment-1155508522)
+
+## Example data
 <details>
 <summary>
     https://www.blinkist.com/api/free_daily
