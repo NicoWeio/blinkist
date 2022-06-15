@@ -4,6 +4,7 @@ from datetime import datetime
 from pathlib import Path
 import requests
 from rich import print
+from rich.progress import track
 
 BASE_URL = 'https://www.blinkist.com/'
 
@@ -66,11 +67,15 @@ for locale in LOCALES:
     book = free_daily['book']
     print(f"Today's free daily in {locale} is: “{book['title']}”")
 
-    chapters = get_chapters(book['slug'])
-    print(
-        f"{len(chapters)} chapters:",
-        ', '.join([c['action_title'] for c in chapters]),
-    )
+    # list of chapters without their content
+    chapter_list = get_chapters(book['slug'])
+
+    # fetch chapter content
+    chapters = [get_chapter(book['id'], chapter['id']) for chapter in track(chapter_list, description='Fetching chapters…')]
+
+    # download audio
+    for chapter in track(chapters, description='Downloading audio…'):
+        download_chapter_audio(book, chapter)
 
     for chapter in chapters:
         chapter_data = get_chapter(book['id'], chapter['id'])
