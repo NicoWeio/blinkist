@@ -1,2 +1,3 @@
 cloudscraper~=1.2.58
 rich~=11.0.0
+tenacity~=8.0.1

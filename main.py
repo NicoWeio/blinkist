@@ -4,6 +4,7 @@ from datetime import datetime
 from pathlib import Path
 from rich import print
 from rich.progress import track
+import tenacity
 
 BASE_URL = 'https://www.blinkist.com/'
 
@@ -12,19 +13,29 @@ HEADERS = {
     'x-requested-with': 'XMLHttpRequest',
 }
 
+CLOUDFLARE_MAX_ATTEMPTS = 10
+CLOUDFLARE_WAIT_TIME = 2
+
 LOCALES = ['en', 'de']
 DOWNLOAD_DIR = Path.home() / 'Musik' / 'Blinkist'
 
 scraper = cloudscraper.create_scraper()
 
 
+@tenacity.retry(
+    retry=tenacity.retry_if_exception_type(cloudscraper.exceptions.CloudflareChallengeError),
+    wait=tenacity.wait_fixed(CLOUDFLARE_WAIT_TIME),
+    stop=tenacity.stop_after_attempt(CLOUDFLARE_MAX_ATTEMPTS),
+    # before_sleep=lambda attempt, delay: print(f"Retrying after {delay} seconds…"),
+)
 def _api_request(endpoint, params=None):
     url = f"{BASE_URL}api/{endpoint}"
     response = scraper.get(url, params=params, headers=HEADERS)
 
     # handle Cloudflare errors
     if response.status_code == 403 or "complete the security check" in response.text:
-        raise cloudscraper.CloudflareChallengeError()  # TODO: retry
+        # TODO: reset scraper for the next try?
+        raise cloudscraper.exceptions.CloudflareChallengeError()
 
     response.raise_for_status()  # handle other errors
     return response.json()
