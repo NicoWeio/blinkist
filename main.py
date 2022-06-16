@@ -18,31 +18,33 @@ DOWNLOAD_DIR = Path.home() / 'Musik' / 'Blinkist'
 scraper = cloudscraper.create_scraper()
 
 
+def _api_request(endpoint, params=None):
+    url = f"{BASE_URL}api/{endpoint}"
+    response = scraper.get(url, params=params, headers=HEADERS)
+
+    # handle Cloudflare errors
+    if response.status_code == 403 or "complete the security check" in response.text:
+        raise cloudscraper.CloudflareChallengeError()  # TODO: retry
+
+    response.raise_for_status()  # handle other errors
+    return response.json()
+
+
 def get_book_dir(book):
     return DOWNLOAD_DIR / f"{datetime.today().strftime('%Y-%m-%d')} – {book['slug']}"
 
 
 def get_free_daily(locale):
     # see also: https://www.blinkist.com/en/content/daily
-    response = scraper.get(
-        f'{BASE_URL}api/free_daily',
-        params={'locale': locale}
-    )
-    return response.json()
+    return _api_request('free_daily', params={'locale': locale})
 
 
 def get_chapters(book_slug):
-    url = f"{BASE_URL}api/books/{book_slug}/chapters"
-    response = scraper.get(url, headers=HEADERS)
-    response.raise_for_status()
-    return response.json()['chapters']
+    return _api_request(f'books/{book_slug}/chapters')['chapters']
 
 
 def get_chapter(book_id, chapter_id):
-    url = f"{BASE_URL}api/books/{book_id}/chapters/{chapter_id}"
-    response = scraper.get(url, headers=HEADERS)
-    response.raise_for_status()
-    return response.json()
+    return _api_request(f'books/{book_id}/chapters/{chapter_id}')
 
 
 def download_chapter_audio(book, chapter_data):
@@ -55,7 +57,7 @@ def download_chapter_audio(book, chapter_data):
         return
 
     assert 'm4a' in chapter_data['signed_audio_url']
-    response = scraper.get(chapter_data['signed_audio_url'])
+    response = scraper.get(chapter_data['signed_audio_url'], headers=HEADERS)
     assert response.status_code == 200
     file_path.write_bytes(response.content)
 
