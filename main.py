@@ -58,7 +58,7 @@ def download_chapter_audio(book, chapter_data):
     response = scraper.get(chapter_data['signed_audio_url'])
     assert response.status_code == 200
     file_path.write_bytes(response.content)
-    print(f"Downloaded chapter {chapter_data['order_no']}")
+
 
 
 for locale in LOCALES:
