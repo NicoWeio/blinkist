@@ -25,18 +25,32 @@ scraper = cloudscraper.create_scraper()
     retry=tenacity.retry_if_exception_type(cloudscraper.exceptions.CloudflareChallengeError),
     wait=tenacity.wait_fixed(CLOUDFLARE_WAIT_TIME),
     stop=tenacity.stop_after_attempt(CLOUDFLARE_MAX_ATTEMPTS),
-    # before_sleep=lambda attempt, delay: print(f"Retrying after {delay} seconds…"),
+    before_sleep=lambda retry_state: print(f"Retrying in {retry_state.next_action.sleep} seconds…"),
 )
-def _api_request(endpoint, params=None):
-    url = f"{BASE_URL}api/{endpoint}"
-    response = scraper.get(url, params=params, headers=HEADERS)
+def _request(url, **kwargs):
+    """
+    Wrapper for verifying and retrying GET requests.
+    """
+    kwargs.setdefault('headers', HEADERS)
+    response = scraper.get(url, **kwargs)
 
     # handle Cloudflare errors
-    if response.status_code == 403 or "complete the security check" in response.text:
+    # We don't check the reponse content here; it could be large binary data and slow things down.
+    if response.status_code == 403:
         # TODO: reset scraper for the next try?
         raise cloudscraper.exceptions.CloudflareChallengeError()
 
     response.raise_for_status()  # handle other errors
+    return response
+
+
+def _api_request(endpoint, params=None):
+    """
+    Wrapper for verifying and retrying GET requests to the Blinkist API.
+    Calls `_request` internally.
+    """
+    url = f"{BASE_URL}api/{endpoint}"
+    response = _request(url, params=params, headers=HEADERS)
     return response.json()
 
 
@@ -67,7 +81,7 @@ def download_chapter_audio(book, chapter_data):
         return
 
     assert 'm4a' in chapter_data['signed_audio_url']
-    response = scraper.get(chapter_data['signed_audio_url'], headers=HEADERS)
+    response = _request(chapter_data['signed_audio_url'])
     assert response.status_code == 200
     file_path.write_bytes(response.content)
 
