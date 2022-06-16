@@ -2,7 +2,6 @@
 import cloudscraper
 from datetime import datetime
 from pathlib import Path
-import requests
 from rich import print
 from rich.progress import track
 
@@ -34,14 +33,14 @@ def get_free_daily(locale):
 
 def get_chapters(book_slug):
     url = f"{BASE_URL}api/books/{book_slug}/chapters"
-    response = requests.get(url, headers=HEADERS)
+    response = scraper.get(url, headers=HEADERS)
     response.raise_for_status()
     return response.json()['chapters']
 
 
 def get_chapter(book_id, chapter_id):
     url = f"{BASE_URL}api/books/{book_id}/chapters/{chapter_id}"
-    response = requests.get(url, headers=HEADERS)
+    response = scraper.get(url, headers=HEADERS)
     response.raise_for_status()
     return response.json()
 
