@@ -73,7 +73,6 @@ def download_chapter_audio(book, chapter_data):
     file_path.write_bytes(response.content)
 
 
-
 for locale in LOCALES:
     free_daily = get_free_daily(locale=locale)
     book = free_daily['book']
