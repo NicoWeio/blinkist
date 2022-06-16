@@ -2,7 +2,7 @@
 import cloudscraper
 from datetime import datetime
 from pathlib import Path
-from rich import print
+from rich.console import Console
 from rich.progress import track
 import tenacity
 
@@ -18,6 +18,7 @@ CLOUDFLARE_WAIT_TIME = 2
 LOCALES = ['en', 'de']
 DOWNLOAD_DIR = Path.home() / 'Musik' / 'Blinkist'
 
+console = Console()
 scraper = cloudscraper.create_scraper()
 
 
@@ -25,7 +26,7 @@ scraper = cloudscraper.create_scraper()
     retry=tenacity.retry_if_exception_type(cloudscraper.exceptions.CloudflareChallengeError),
     wait=tenacity.wait_fixed(CLOUDFLARE_WAIT_TIME),
     stop=tenacity.stop_after_attempt(CLOUDFLARE_MAX_ATTEMPTS),
-    before_sleep=lambda retry_state: print(f"Retrying in {retry_state.next_action.sleep} seconds…"),
+    before_sleep=lambda retry_state: console.print(f"Retrying in {retry_state.next_action.sleep} seconds…"),
 )
 def _request(url, **kwargs):
     """
@@ -47,6 +48,7 @@ def _request(url, **kwargs):
 def _api_request(endpoint, params=None):
     """
     Wrapper for verifying and retrying GET requests to the Blinkist API.
+    Returns the parsed JSON response.
     Calls `_request` internally.
     """
     url = f"{BASE_URL}api/{endpoint}"
@@ -77,7 +79,7 @@ def download_chapter_audio(book, chapter_data):
     file_path = book_dir / f"chapter_{chapter_data['order_no']}.m4a"
 
     if file_path.exists():
-        print(f"Skipping existing file: {file_path}")
+        console.print(f"Skipping existing file: {file_path}")
         return
 
     assert 'm4a' in chapter_data['signed_audio_url']
@@ -87,15 +89,18 @@ def download_chapter_audio(book, chapter_data):
 
 
 for locale in LOCALES:
-    free_daily = get_free_daily(locale=locale)
+    with console.status(f"Retrieving free daily in {locale}…"):
+        free_daily = get_free_daily(locale=locale)
     book = free_daily['book']
-    print(f"Today's free daily in {locale} is: “{book['title']}”")
+    console.print(f"Today's free daily in {locale} is: “{book['title']}”")
 
     # list of chapters without their content
-    chapter_list = get_chapters(book['slug'])
+    with console.status(f"Retrieving chapters of {book['title']}…"):
+        chapter_list = get_chapters(book['slug'])
 
     # fetch chapter content
-    chapters = [get_chapter(book['id'], chapter['id']) for chapter in track(chapter_list, description='Fetching chapters…')]
+    chapters = [get_chapter(book['id'], chapter['id'])
+                for chapter in track(chapter_list, description='Fetching chapters…')]
 
     # download audio
     for chapter in track(chapters, description='Downloading audio…'):
