@@ -75,7 +75,3 @@ for locale in LOCALES:
     # download audio
     for chapter in track(chapters, description='Downloading audio…'):
         download_chapter_audio(book, chapter)
-
-    for chapter in chapters:
-        chapter_data = get_chapter(book['id'], chapter['id'])
-        download_chapter_audio(book, chapter_data)
