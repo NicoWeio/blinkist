@@ -88,6 +88,29 @@ def download_chapter_audio(book, chapter_data):
     file_path.write_bytes(response.content)
 
 
+def download_book_cover(book):
+    # find the URL of the largest version
+    urls = set()
+    for source in book['image']['sources']:
+        urls.add(source['src'])
+        urls |= set(source['srcset'].values())
+    # example: 'https://images.blinkist.io/images/books/617be9b56cee07000723559e/1_1/470.jpg' → 470
+    url = sorted(urls, key=lambda x: int(x.split('/')[-1].rstrip('.jpg')), reverse=True)[0]
+
+    book_dir = get_book_dir(book)
+    book_dir.mkdir(exist_ok=True)
+    file_path = book_dir / "cover.jpg"
+
+    if file_path.exists():
+        console.print(f"Skipping existing file: {file_path}")
+        return
+
+    assert url.endswith('.jpg')
+    response = _request(url)
+    assert response.status_code == 200
+    file_path.write_bytes(response.content)
+
+
 for locale in LOCALES:
     with console.status(f"Retrieving free daily in {locale}…"):
         free_daily = get_free_daily(locale=locale)
@@ -105,3 +128,7 @@ for locale in LOCALES:
     # download audio
     for chapter in track(chapters, description='Downloading audio…'):
         download_chapter_audio(book, chapter)
+
+    # download cover
+    with console.status(f"Downloading cover…"):
+        download_book_cover(book)
