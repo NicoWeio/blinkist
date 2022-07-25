@@ -27,6 +27,10 @@ for locale in LOCALES:
     with console.status("Downloading text…"):
         book.download_text_md(book_dir)
 
+    # download raw (YAML)
+    with console.status("Downloading raw YAML…"):
+        book.download_raw_yaml(book_dir)
+
     # download audio
     for chapter in track(book.chapters, description='Downloading audio…'):
         chapter.download_audio(book_dir)

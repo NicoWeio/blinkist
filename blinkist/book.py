@@ -2,6 +2,7 @@ from functools import cached_property
 from pathlib import Path  # typing only
 from typing import List
 
+import yaml
 from rich.progress import track
 
 from .chapter import Chapter  # typing only
@@ -68,7 +69,7 @@ class Book:
 
     def download_text_md(self, target_dir: Path) -> None:
         """
-        Downloads the text as Markdown to the given directory.
+        Downloads the text content as Markdown to the given directory.
         """
         def md_section(level: int, title: str, text: str) -> str:
             return f"{'#' * level} {title}\n\n{text}"
@@ -113,3 +114,27 @@ class Book:
 
         file_path = target_dir / "book.md"
         file_path.write_text(markdown_text)
+
+    def serialize(self) -> dict:
+        """
+        Serializes the book (including its complete chapters) to a dict.
+        """
+        return {
+            **self.data,
+            'chapters': [
+                chapter.serialize()
+                for chapter in self.chapters
+            ],
+        }
+
+    def download_raw_yaml(self, target_dir: Path) -> None:
+        """
+        Downloads the raw YAML to the given directory.
+        """
+        file_path = target_dir / "book.yaml"
+        file_path.write_text(yaml.dump(
+            self.serialize(),
+            default_flow_style=False,
+            allow_unicode=True,
+
+        ))

@@ -16,6 +16,11 @@ class Chapter:
         chapter_data = api_request(f'books/{book.id}/chapters/{chapter_id}')
         return Chapter(chapter_data)
 
+    def serialize(self) -> dict:
+        """
+        Serializes the chapter to a dict.
+        """
+        return self.data
 
     def download_audio(self, target_dir: Path) -> None:
         file_path = target_dir / f"chapter_{self.data['order_no']}.m4a"
