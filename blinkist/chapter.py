@@ -1,15 +1,11 @@
 from pathlib import Path  # typing only
 
-from .book import Book  # typing only
 from .common import api_request, request
 from .console import console
 
 
 class Chapter:
-    def __init__(self, chapter_data: dict, book: Book):
-        # Remember our parent; we need it for determining the output directory, for example.
-        self.book = book
-
+    def __init__(self, chapter_data: dict):
         self.data = chapter_data
 
         # pylint: disable=C0103
@@ -18,7 +14,8 @@ class Chapter:
     @staticmethod
     def from_id(book, chapter_id) -> 'Chapter':
         chapter_data = api_request(f'books/{book.id}/chapters/{chapter_id}')
-        return Chapter(chapter_data, book)
+        return Chapter(chapter_data)
+
 
     def download_audio(self, target_dir: Path) -> None:
         file_path = target_dir / f"chapter_{self.data['order_no']}.m4a"
