@@ -59,7 +59,7 @@ class Book:
         file_path = target_dir / f"{FILENAME_COVER}.jpg"
 
         if file_path.exists():
-            console.print(f"Skipping existing file: {file_path}")
+            console.print(f"Skipping existing file: {file_path.relative_to(target_dir)}")
             return
 
         assert url.endswith('.jpg')

@@ -26,7 +26,7 @@ class Chapter:
         file_path = target_dir / f"chapter_{self.data['order_no']}.m4a"
 
         if file_path.exists():
-            console.print(f"Skipping existing file: {file_path}")
+            console.print(f"Skipping existing file: {file_path.relative_to(target_dir)}")
             return
 
         assert 'm4a' in self.data['signed_audio_url']
