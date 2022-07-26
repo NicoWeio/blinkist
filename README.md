@@ -1,5 +1,39 @@
 # About this repository
-While https://github.com/ptrstn/dailyblink was temporarily broken (https://github.com/ptrstn/dailyblink/issues/32),
+
+## Features
+This program downloads Blinkist's “free daily” in all available languages.
+It saves…
+- the (almost) raw API responses
+  - as YAML
+  - This includes things like categories or ratings which are not saved elsewhere.
+- the text version
+  - as Markdown
+    - the unmodified HTML-formatted content + custom Markdown-formatted structure
+    - 🛈 Consider using [Pandoc](https://pandoc.org/) to convert to other formats like HTML, PDF, EPUB, etc.
+- the audio version
+  - as one M4A file per chapter (no modifications)
+- the cover image
+  - as JPEG (no modifications)
+  - in the highest resolution available (1080×1080)
+
+## Installation
+
+```bash
+# First, clone the repository
+
+# Then, install the dependencies
+pip install -r requirements.txt
+```
+
+Installation via _setuptools_ and _pip_ is currently not supported.
+
+## Usage
+Just run the `main.py` executable.
+Currently, this does not take any arguments; instead, you need to modify [`blinkist/config.py`](blinkist/config.py) to your needs.
+
+
+## Motivation
+While https://github.com/ptrstn/dailyblink is/was broken due to changes to Blinkist's frontend (https://github.com/ptrstn/dailyblink/issues/32),
 I wrote my own Blinkist downloader from scratch.
 In contrast to the original, this one relies on Blinkist's API, which might be more stable than scraping with *beautifulsoup*.
 
