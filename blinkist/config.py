@@ -1,5 +1,3 @@
-from pathlib import Path
-
 BASE_URL = 'https://www.blinkist.com/'
 
 HEADERS = {
@@ -10,4 +8,7 @@ CLOUDFLARE_MAX_ATTEMPTS = 10
 CLOUDFLARE_WAIT_TIME = 2
 
 LOCALES = ['en', 'de']
-DOWNLOAD_DIR = Path.home() / 'Musik' / 'Blinkist'
+
+FILENAME_COVER = "cover"
+FILENAME_TEXT = "book"
+FILENAME_RAW = "book"

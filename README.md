@@ -22,14 +22,18 @@ It saves…
 # First, clone the repository
 
 # Then, install the dependencies
-pip install -r requirements.txt
+$ pip install -r requirements.txt
 ```
 
 Installation via _setuptools_ and _pip_ is currently not supported.
 
 ## Usage
-Just run the `main.py` executable.
-Currently, this does not take any arguments; instead, you need to modify [`blinkist/config.py`](blinkist/config.py) to your needs.
+Just run the [`main.py`](main.py) executable, providing a path to a “library directory”, where every book will be saved in its own subdirectory:
+```bash
+$ python main.py ~/Library/Blinkist
+```
+Some CLI options are available; see `main.py --help`.
+For other options, you need to modify [`blinkist/config.py`](blinkist/config.py) to your needs.
 
 
 ## Motivation

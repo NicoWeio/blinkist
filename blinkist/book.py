@@ -7,7 +7,7 @@ from rich.progress import track
 
 from .chapter import Chapter  # typing only
 from .common import api_request, request
-from .config import BASE_URL
+from .config import BASE_URL, FILENAME_COVER, FILENAME_TEXT, FILENAME_RAW
 from .console import console
 
 
@@ -56,7 +56,7 @@ class Book:
         # example: 'https://images.blinkist.io/images/books/617be9b56cee07000723559e/1_1/470.jpg' → 470
         url = sorted(urls, key=lambda x: int(x.split('/')[-1].rstrip('.jpg')), reverse=True)[0]
 
-        file_path = target_dir / "cover.jpg"
+        file_path = target_dir / f"{FILENAME_COVER}.jpg"
 
         if file_path.exists():
             console.print(f"Skipping existing file: {file_path}")
@@ -112,7 +112,7 @@ class Book:
 
         markdown_text = "\n\n\n".join(parts)
 
-        file_path = target_dir / "book.md"
+        file_path = target_dir / f"{FILENAME_TEXT}.md"
         file_path.write_text(markdown_text)
 
     def serialize(self) -> dict:
@@ -131,7 +131,7 @@ class Book:
         """
         Downloads the raw YAML to the given directory.
         """
-        file_path = target_dir / "book.yaml"
+        file_path = target_dir / f"{FILENAME_RAW}.yaml"
         file_path.write_text(yaml.dump(
             self.serialize(),
             default_flow_style=False,
