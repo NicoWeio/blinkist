@@ -1,10 +1,9 @@
 import cloudscraper
 import tenacity
-from rich.console import Console
 
-from .config import (BASE_URL, CLOUDFLARE_MAX_ATTEMPTS, CLOUDFLARE_WAIT_TIME, HEADERS)
+from .config import CLOUDFLARE_MAX_ATTEMPTS, CLOUDFLARE_WAIT_TIME, HEADERS
+from .console import console
 
-console = Console()
 scraper = cloudscraper.create_scraper()
 
 
@@ -31,12 +30,28 @@ def request(url, **kwargs):
     return response
 
 
-def api_request(endpoint, params=None):
+def api_request(base_url: str, endpoint: str, params=None):
     """
     Wrapper for verifying and retrying GET requests to the Blinkist API.
     Returns the parsed JSON response.
-    Calls `_request` internally.
+    Calls `request` internally.
     """
-    url = f"{BASE_URL}api/{endpoint}"
+    url = base_url + endpoint
     response = request(url, params=params, headers=HEADERS)
     return response.json()
+
+
+def api_request_web(endpoint: str, params=None):
+    """
+    Wrapper for verifying and retrying GET requests to the Blinkist web API (https://blinkist.com/api/).
+    Returns the parsed JSON response.
+    """
+    return api_request('https://blinkist.com/api/', endpoint, params=params)
+
+
+def api_request_app(endpoint: str, params=None):
+    """
+    Wrapper for verifying and retrying GET requests to the Blinkist app API (https://api.blinkist.com/).
+    Returns the parsed JSON response.
+    """
+    return api_request('https://api.blinkist.com/', endpoint, params=params)

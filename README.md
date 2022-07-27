@@ -1,8 +1,9 @@
 # About this repository
 
 ## Features
-This program downloads Blinkist's “free daily” in all available languages.
-It saves…
+### File formats
+This program downloads books from Blinkist.
+To be precise, it saves…
 - the (almost) raw API responses
   - as YAML
   - This includes things like categories or ratings which are not saved elsewhere.
@@ -16,6 +17,15 @@ It saves…
   - as JPEG (no modifications)
   - in the highest resolution available (1080×1080)
 
+### Book selection
+- `--book-slug`: the book slug (e.g. `get-smart-en`)
+  - ⚠️ As of writing, no authentication is required to access _any_ book, a benefit which _should_ require a subscription _in theory_. Do consider the legal and moral implications of using this.
+- `--freedaily`: Each day, Blinkist offers a free book for each locale.
+  - [Website (en)](https://www.blinkist.com/en/content/daily)
+- `--freecurated`: There are some curated lists of books, which in turn are free.
+  - for example: [“Expert Picks: Elon Musk” (de)](https://www.blinkist.com/de/content/collections/expert-picks-elon-musk)
+- 🛈 If you pass multiple of these options, all of them will be used.
+
 ## Installation
 
 ```bash
@@ -28,11 +38,12 @@ $ pip install -r requirements.txt
 Installation via _setuptools_ and _pip_ is currently not supported.
 
 ## Usage
-Just run the [`main.py`](main.py) executable, providing a path to a “library directory”, where every book will be saved in its own subdirectory:
+Just run the [`main.py`](main.py) executable, stating what to download and providing a path to a “library directory”, where every book will be saved in its own subdirectory.
+Here's an example:
 ```bash
-$ python main.py ~/Library/Blinkist
+$ ./main.py --freedaily ~/Library/Blinkist
 ```
-Some CLI options are available; see `main.py --help`.
+For an overview of all CLI options, see `main.py --help`.
 For other options, you need to modify [`blinkist/config.py`](blinkist/config.py) to your needs.
 
 
@@ -40,6 +51,7 @@ For other options, you need to modify [`blinkist/config.py`](blinkist/config.py)
 While https://github.com/ptrstn/dailyblink is/was broken due to changes to Blinkist's frontend (https://github.com/ptrstn/dailyblink/issues/32),
 I wrote my own Blinkist downloader from scratch.
 In contrast to the original, this one relies on Blinkist's API, which might be more stable than scraping with *beautifulsoup*.
+Now, some aspects are even better than in the original, while others are sill lacking.
 
 ## Limitations
 - Downloading arbitrary books with Blinkist Premium is not supported out of the box. It might be easy to get it working, but I didn't test it. There's other tools for that anyway.
@@ -201,5 +213,109 @@ In contrast to the original, this one relies on Blinkist's API, which might be m
 }
 ```
 </details>
+
+<details>
+<summary>
+    https://api.blinkist.com/contentaccess/free_items
+</summary>
+
+```json
+{
+  "items": [
+    {
+      "item_type": "curated_list",
+      "item_id": "f8a49868-a6f3-40fd-b264-2348770c6815"
+    },
+    {
+      "item_type": "book",
+      "item_id": "52bec76a3933330008000000"
+    },
+    {
+      "item_type": "episode",
+      "item_id": "1055"
+    },
+    …
+  ]
+}
+```
+</details>
+
+
+<details>
+<summary>
+    https://api.blinkist.com/content/curated_lists/f8a49868-a6f3-40fd-b264-2348770c6815
+</summary>
+
+```json
+{
+  "curated_list": {
+    "id": "1495",
+    "position": -1,
+    "uuid": "f8a49868-a6f3-40fd-b264-2348770c6815",
+    "slug": "how-to-lead-a-team-you-didn-t-hire",
+    "title": "How To Lead A Team You Didn't Hire",
+    "description": "The Great Resignation has caused many leaders to pursue new roles, often taking charge of pre-existing departments and teams. Starting a new position can be its own steep learning curve, but the margin for error is even smaller when you are managing a team you didn’t hire. How do you earn this team’s respect and make accurate assessments of its current challenges without the context of someone who built it from the ground up? The following two Blinks and two Shortcasts investigate what it means to be a great leader under these circumstances.",
+    "short_description": "Four free Blinks and Shortcasts full of tips on how to be a great leader. ",
+    "curator_name": "Sally Page",
+    "curator_id": "blinkist",
+    "etag": 1658845113,
+    "language": "en",
+    "discoverable": false,
+    "published_at": "2022-07-26T14:18:33.000Z",
+    "deleted_at": null,
+    "kind": "collection",
+    "styling": {
+      "main_color": null,
+      "accent_color": null,
+      "text_color": null,
+      "text_on_accent_color": null
+    },
+    "content_items": [
+      {
+        "id": "14380",
+        "position": 1,
+        "content_item_type": "book",
+        "content_item_id": "52bec76a3933330008000000",
+        "description": ""
+      },
+      {
+        "id": "14381",
+        "position": 2,
+        "content_item_type": "book",
+        "content_item_id": "52f1195c35653600110b0000",
+        "description": ""
+      },
+      {
+        "id": "14382",
+        "position": 3,
+        "content_item_type": "episode",
+        "content_item_id": "1055",
+        "description": ""
+      },
+      {
+        "id": "14383",
+        "position": 4,
+        "content_item_type": "episode",
+        "content_item_id": "1000",
+        "description": ""
+      }
+    ]
+  }
+}
+```
+</details>
+
+
+<!--
+<details>
+<summary>
+    URL
+</summary>
+
+```json
+DATA
+```
+</details>
+-->
 
 <!-- `https://www.blinkist.com/api/mickey_mouse/setup?…` -->

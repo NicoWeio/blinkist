@@ -5,10 +5,9 @@ from typing import List
 import yaml
 from rich.progress import track
 
-from .chapter import Chapter  # typing only
-from .common import api_request, request
-from .config import BASE_URL, FILENAME_COVER, FILENAME_TEXT, FILENAME_RAW
-from .console import console
+from .chapter import Chapter
+from .common import api_request_web, request
+from .config import BASE_URL, FILENAME_COVER, FILENAME_RAW, FILENAME_TEXT
 
 
 class Book:
@@ -17,11 +16,25 @@ class Book:
 
         # pylint: disable=C0103
         self.id = book_data['id']
-        self.title = book_data['title']
+        self.language = book_data['language']
         self.slug = book_data['slug']
+        self.title = book_data['title']
 
     def __repr__(self) -> str:
         return f"Book <{self.title}>"
+
+    def __hash__(self) -> int:
+        return hash(self.id)
+
+    def __eq__(self, o) -> bool:
+        return isinstance(o, Book) and self.id == o.id
+
+    @staticmethod
+    def from_slug(slug: str) -> 'Book':
+        """
+        Loads a book from the API by its slug.
+        """
+        return Book(api_request_web(f'books/{slug}'))
 
     @cached_property
     def chapter_list(self) -> List[dict]:
@@ -29,7 +42,7 @@ class Book:
         Returns the chapter list straight from the API.
         Does not include their respective contents.
         """
-        return api_request(f'books/{self.slug}/chapters')['chapters']
+        return api_request_web(f'books/{self.slug}/chapters')['chapters']
 
     @cached_property
     def chapters(self) -> List[Chapter]:
@@ -57,10 +70,6 @@ class Book:
         url = sorted(urls, key=lambda x: int(x.split('/')[-1].rstrip('.jpg')), reverse=True)[0]
 
         file_path = target_dir / f"{FILENAME_COVER}.jpg"
-
-        if file_path.exists():
-            console.print(f"Skipping existing file: {file_path.relative_to(target_dir)}")
-            return
 
         assert url.endswith('.jpg')
         response = request(url)
@@ -136,5 +145,4 @@ class Book:
             self.serialize(),
             default_flow_style=False,
             allow_unicode=True,
-
         ))

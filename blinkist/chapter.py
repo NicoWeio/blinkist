@@ -1,6 +1,6 @@
 from pathlib import Path  # typing only
 
-from .common import api_request, request
+from .common import api_request_web, request
 from .console import console
 
 
@@ -13,7 +13,7 @@ class Chapter:
 
     @staticmethod
     def from_id(book, chapter_id) -> 'Chapter':
-        chapter_data = api_request(f'books/{book.id}/chapters/{chapter_id}')
+        chapter_data = api_request_web(f'books/{book.id}/chapters/{chapter_id}')
         return Chapter(chapter_data)
 
     def serialize(self) -> dict:
@@ -23,11 +23,12 @@ class Chapter:
         return self.data
 
     def download_audio(self, target_dir: Path) -> None:
-        file_path = target_dir / f"chapter_{self.data['order_no']}.m4a"
-
-        if file_path.exists():
-            console.print(f"Skipping existing file: {file_path.relative_to(target_dir)}")
+        if 'signed_audio_url' not in self.data:
+            console.print(f'No audio for chapter {self.id}')
+            # NOTE: Probably, the whole book has no audio. We might want to handle this there.
             return
+
+        file_path = target_dir / f"chapter_{self.data['order_no']}.m4a"
 
         assert 'm4a' in self.data['signed_audio_url']
         response = request(self.data['signed_audio_url'])

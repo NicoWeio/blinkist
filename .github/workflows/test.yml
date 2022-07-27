@@ -37,9 +37,13 @@ jobs:
       - name: Set up the target directory
         run: |
           mkdir -p /home/runner/Musik/Blinkist/
-      - name: See if it runs through…
+      - name: Test `--freedaily`
         run: |
-          python main.py /home/runner/Musik/Blinkist/
+          python main.py --freedaily /home/runner/Musik/Blinkist/
+      # NOTE: The following should require a paid plan, but doesn't. Let's see for how much longer it works.
+      - name: Test `--book-slug`
+        run: |
+          python main.py --book-slug get-smart-en /home/runner/Musik/Blinkist/
       - name: Check the directory contents
         run: |
           ls -hl /home/runner/Musik/Blinkist/*

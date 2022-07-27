@@ -7,7 +7,7 @@ HEADERS = {
 CLOUDFLARE_MAX_ATTEMPTS = 10
 CLOUDFLARE_WAIT_TIME = 2
 
-LOCALES = ['en', 'de']
+LANGUAGES = ['en', 'de']
 
 FILENAME_COVER = "cover"
 FILENAME_TEXT = "book"
