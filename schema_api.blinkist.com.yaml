@@ -1,0 +1,587 @@
+openapi: 3.0.0
+info:
+  title: Blinkist API (api.blinkist.com)
+  description: Some of the Blinkist API endpoints used in their Android app. This documentation was generated with [mitmproxy2swagger](https://github.com/alufers/mitmproxy2swagger). Highly incomplete.
+  version: 1.0.0
+servers:
+- url: https://api.blinkist.com
+  description: The default server
+paths:
+  /content/curated_lists/{uuid}:
+    get:
+      summary: GET curated_lists by uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  curated_list:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      position:
+                        type: number
+                      uuid:
+                        type: string
+                      slug:
+                        type: string
+                      title:
+                        type: string
+                      description:
+                        type: string
+                      short_description:
+                        type: string
+                      curator_name:
+                        type: string
+                      curator_id:
+                        type: string
+                      etag:
+                        type: number
+                      language:
+                        type: string
+                      discoverable:
+                        type: boolean
+                      published_at:
+                        type: string
+                      deleted_at:
+                        type: object
+                      kind:
+                        type: string
+                      styling:
+                        type: object
+                        properties:
+                          main_color:
+                            type: object
+                          accent_color:
+                            type: object
+                          text_color:
+                            type: object
+                          text_on_accent_color:
+                            type: object
+                      content_items:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                            position:
+                              type: number
+                            content_item_type:
+                              type: string
+                            content_item_id:
+                              type: string
+                            description:
+                              type: string
+      parameters:
+      - name: uuid
+        in: path
+        required: true
+        schema:
+          type: string
+  /content/metadata:
+    get:
+      summary: GET metadata
+      responses: {}
+  /contentinteraction/personalities:
+    get:
+      summary: GET personalities
+      responses: {}
+  /content/shows:
+    get:
+      summary: GET shows
+      responses: {}
+  /content/shows/{id}:
+    get:
+      summary: GET shows by id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      etag:
+                        type: number
+                      slug:
+                        type: string
+                      title:
+                        type: string
+                      tagline:
+                        type: string
+                      about:
+                        type: string
+                      published_at:
+                        type: string
+                      published:
+                        type: boolean
+                      publishers:
+                        type: string
+                      kind:
+                        type: string
+                      language:
+                        type: string
+                      styling:
+                        type: object
+                        properties:
+                          main_color:
+                            type: string
+                          accent_color:
+                            type: string
+                          text_color:
+                            type: string
+                          text_on_accent_color:
+                            type: string
+                      images:
+                        type: object
+                        properties:
+                          types:
+                            type: array
+                            items:
+                              type: string
+                          sizes:
+                            type: array
+                            items:
+                              type: number
+                          url_template:
+                            type: string
+                      episodes:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                            etag:
+                              type: number
+                            title:
+                              type: string
+                            description:
+                              type: string
+                            who_should_listen:
+                              type: string
+                            teaser:
+                              type: string
+                            published_at:
+                              type: string
+                            audio:
+                              type: object
+                              properties:
+                                duration:
+                                  type: number
+                            images:
+                              type: object
+                              properties:
+                                types:
+                                  type: array
+                                  items:
+                                    type: string
+                                sizes:
+                                  type: array
+                                  items:
+                                    type: number
+                                url_template:
+                                  type: string
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /search:
+    get:
+      summary: GET search
+      responses: {}
+  /search/suggestions:
+    get:
+      summary: GET suggestions
+      responses: {}
+  /content/shortcasts:
+    get:
+      summary: GET shortcasts
+      responses: {}
+  /contentinteraction/user_collections:
+    get:
+      summary: GET user_collections
+      responses: {}
+  /v4/books:
+    get:
+      summary: GET books
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  books:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        etag:
+                          type: number
+                        deleted_at:
+                          type: object
+                        published_at:
+                          type: string
+                        discoverable:
+                          type: boolean
+                        title:
+                          type: string
+                        ibooks_id:
+                          type: object
+                        is_audio:
+                          type: boolean
+                        subtitle:
+                          type: string
+                        author:
+                          type: string
+                        language:
+                          type: string
+                        about_the_book:
+                          type: string
+                        teaser:
+                          type: string
+                        bundle:
+                          type: object
+                        bundle_id:
+                          type: object
+                        slug:
+                          type: string
+                        who_should_read:
+                          type: string
+                        about_the_author:
+                          type: string
+                        market:
+                          type: string
+                        main_color:
+                          type: string
+                        text_color:
+                          type: string
+                        image_url:
+                          type: string
+                        images:
+                          type: object
+                          properties:
+                            types:
+                              type: array
+                              items:
+                                type: string
+                            sizes:
+                              type: array
+                              items:
+                                type: number
+                            url_template:
+                              type: string
+                        reading_duration:
+                          type: number
+                        number_of_chapters:
+                          type: number
+                        further_reading_book_ids:
+                          type: array
+                          items:
+                            type: string
+  /v4/books/{id}:
+    get:
+      summary: GET books by id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  book:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      etag:
+                        type: number
+                      deleted_at:
+                        type: object
+                      published_at:
+                        type: string
+                      discoverable:
+                        type: boolean
+                      title:
+                        type: string
+                      ibooks_id:
+                        type: object
+                      is_audio:
+                        type: boolean
+                      subtitle:
+                        type: string
+                      author:
+                        type: string
+                      language:
+                        type: string
+                      about_the_book:
+                        type: string
+                      teaser:
+                        type: string
+                      bundle:
+                        type: object
+                      bundle_id:
+                        type: object
+                      slug:
+                        type: string
+                      who_should_read:
+                        type: string
+                      about_the_author:
+                        type: string
+                      market:
+                        type: string
+                      main_color:
+                        type: string
+                      text_color:
+                        type: string
+                      image_url:
+                        type: string
+                      images:
+                        type: object
+                        properties:
+                          types:
+                            type: array
+                            items:
+                              type: string
+                          sizes:
+                            type: array
+                            items:
+                              type: number
+                          url_template:
+                            type: string
+                      chapters:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                            order_no:
+                              type: number
+                            title:
+                              type: string
+                            order_nr:
+                              type: number
+                      reading_duration:
+                        type: number
+                      number_of_chapters:
+                        type: number
+                      further_reading_book_ids:
+                        type: array
+                        items: {}
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /v4/books/{id}/meta:
+    get:
+      summary: GET meta by id
+      responses: {}
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /v4/books/{id}/teaser:
+    get:
+      summary: GET teaser by id
+      responses: {}
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /v4/books/{id}/territory:
+    get:
+      summary: GET territory by id
+      responses: {}
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /v4/books/{id}/similar_books:
+    get:
+      summary: GET similar_books by id
+      responses: {}
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /v4/books/{id}/audiobook:
+    get:
+      summary: GET audiobook by id
+      responses: {}
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /v4/audiobooks/search_suggestions:
+    get:
+      summary: GET search_suggestions
+      responses: {}
+      parameters:
+      - name: locale
+        in: query
+        required: false
+        schema:
+          type: string
+  /v4/categories:
+    get:
+      summary: GET categories
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  categories:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        etag:
+                          type: number
+                        priority:
+                          type: number
+                        restricted_to_languages:
+                          type: array
+                          items: {}
+                        book_ids:
+                          type: array
+                          items:
+                            type: string
+                        i18ns:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                              language:
+                                type: string
+                              title:
+                                type: string
+                              subtitle:
+                                type: string
+                              slug:
+                                type: string
+                        image_url:
+                          type: string
+                        images:
+                          type: object
+                          properties:
+                            types:
+                              type: array
+                              items:
+                                type: string
+                            sizes:
+                              type: array
+                              items:
+                                type: number
+                            url_template:
+                              type: string
+  /v4/free_books:
+    get:
+      summary: GET free_books
+      responses: {}
+  /v4/subscriptions:
+    get:
+      summary: GET subscriptions
+      responses: {}
+  /v4/topics:
+    get:
+      summary: GET topics
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  topics:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        etag:
+                          type: number
+                        category_ids:
+                          type: array
+                          items:
+                            type: string
+                        book_ids:
+                          type: array
+                          items:
+                            type: string
+                        i18ns:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                              language:
+                                type: string
+                              title:
+                                type: string
+                              slug:
+                                type: string
+                              description:
+                                type: string
+                        image_url:
+                          type: string
+                        images:
+                          type: object
+                          properties:
+                            types:
+                              type: array
+                              items:
+                                type: string
+                            sizes:
+                              type: array
+                              items:
+                                type: number
+                            url_template:
+                              type: string
+  /v4/contentaccess/blocked_items:
+    get:
+      summary: GET blocked_items
+      responses: {}
+  /contentaccess/free_items:
+    get:
+      summary: GET free_items
+      responses: {}
