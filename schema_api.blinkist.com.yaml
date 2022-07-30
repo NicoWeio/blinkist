@@ -1,7 +1,10 @@
 openapi: 3.0.0
 info:
   title: Blinkist API (api.blinkist.com)
-  description: Some of the Blinkist API endpoints used in their Android app. This documentation was generated with [mitmproxy2swagger](https://github.com/alufers/mitmproxy2swagger). Highly incomplete.
+  description: |
+    Some of the Blinkist API endpoints used in their Android app.
+    This documentation was generated with [mitmproxy2swagger](https://github.com/alufers/mitmproxy2swagger).
+    Highly incomplete.
   version: 1.0.0
 servers:
 - url: https://api.blinkist.com

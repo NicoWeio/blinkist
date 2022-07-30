@@ -21,15 +21,20 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: Generate Swagger UI
+      - name: Generate Swagger UI (app | api.blinkist.com)
         uses: Legion2/swagger-ui-action@v1
         with:
-          output: build/swagger-ui
+          output: build/app
           spec-file: schema_api.blinkist.com.yaml
+      - name: Generate Swagger UI (web | blinkist.com/api)
+        uses: Legion2/swagger-ui-action@v1
+        with:
+          output: build/web
+          spec-file: schema_blinkist.com∕api.yaml
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: build/swagger-ui
+          path: build
 
   deploy:
     needs: build

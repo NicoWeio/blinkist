@@ -1,0 +1,380 @@
+openapi: 3.0.0
+info:
+  title: Blinkist API (blinkist.com/api)
+  description: |
+    Some of the Blinkist API endpoints used in their web app.
+    This documentation was generated with [mitmproxy2swagger](https://github.com/alufers/mitmproxy2swagger).
+    Highly incomplete.
+    You might encounter problems with Cloudflare.
+  version: 1.0.0
+servers:
+- url: https://www.blinkist.com/api
+  description: The default server
+paths:
+  /free_daily:
+    get:
+      summary: GET free_daily
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  book:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      kind:
+                        type: string
+                      slug:
+                        type: string
+                      title:
+                        type: string
+                      subtitle:
+                        type: string
+                      subtitleHtmlSafe:
+                        type: string
+                      aboutTheBook:
+                        type: string
+                      buyOnAmazonUrl:
+                        type: string
+                      author:
+                        type: string
+                      truncatedAuthor:
+                        type: string
+                      sourceAuthor:
+                        type: string
+                      url:
+                        type: string
+                      browseUrl:
+                        type: string
+                      previewUrl:
+                        type: string
+                      readUrl:
+                        type: string
+                      playUrl:
+                        type: string
+                      readingDuration:
+                        type: number
+                      minutesToRead:
+                        type: number
+                      isAudio:
+                        type: boolean
+                      readCount:
+                        type: object
+                      image:
+                        type: object
+                        properties:
+                          default:
+                            type: object
+                            properties:
+                              src:
+                                type: string
+                              srcset:
+                                type: object
+                                properties:
+                                  2x:
+                                    type: string
+                          sources:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                media:
+                                  type: string
+                                src:
+                                  type: string
+                                srcset:
+                                  type: object
+                                  properties:
+                                    2x:
+                                      type: string
+                      audioUrl:
+                        type: string
+                      chaptersLength:
+                        type: number
+                      hasAudio:
+                        type: boolean
+                      language:
+                        type: string
+                      freeDaily:
+                        type: object
+                      isFree:
+                        type: boolean
+                      category:
+                        type: object
+                        properties:
+                          title:
+                            type: string
+                          sprite:
+                            type: string
+                          slug:
+                            type: string
+                      averageRating:
+                        type: number
+                      totalRatings:
+                        type: number
+                      categories:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                            url:
+                              type: string
+                            sprite:
+                              type: string
+                            slug:
+                              type: string
+                            title:
+                              type: string
+                            subtitle:
+                              type: string
+                  endTimestamp:
+                    type: number
+      parameters:
+      - name: locale
+        in: query
+        required: false
+        schema:
+          type: string
+  /books/{slugOrId}:
+    get:
+      summary: GET books by slugOrId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  kind:
+                    type: string
+                  slug:
+                    type: string
+                  title:
+                    type: string
+                  subtitle:
+                    type: string
+                  subtitleHtmlSafe:
+                    type: string
+                  aboutTheBook:
+                    type: string
+                  buyOnAmazonUrl:
+                    type: string
+                  author:
+                    type: string
+                  truncatedAuthor:
+                    type: string
+                  sourceAuthor:
+                    type: string
+                  url:
+                    type: string
+                  browseUrl:
+                    type: string
+                  previewUrl:
+                    type: string
+                  readUrl:
+                    type: string
+                  playUrl:
+                    type: string
+                  readingDuration:
+                    type: number
+                  minutesToRead:
+                    type: number
+                  isAudio:
+                    type: boolean
+                  readCount:
+                    type: string
+                  image:
+                    type: object
+                    properties:
+                      default:
+                        type: object
+                        properties:
+                          src:
+                            type: string
+                          srcset:
+                            type: object
+                            properties:
+                              2x:
+                                type: string
+                      sources:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            media:
+                              type: string
+                            src:
+                              type: string
+                            srcset:
+                              type: object
+                              properties:
+                                2x:
+                                  type: string
+                  audioUrl:
+                    type: string
+                  chaptersLength:
+                    type: number
+                  hasAudio:
+                    type: boolean
+                  language:
+                    type: string
+                  freeDaily:
+                    type: object
+                  isFree:
+                    type: boolean
+                  category:
+                    type: object
+                    properties:
+                      title:
+                        type: string
+                      sprite:
+                        type: string
+                      slug:
+                        type: string
+                  averageRating:
+                    type: number
+                  totalRatings:
+                    type: number
+                  categories:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        url:
+                          type: string
+                        sprite:
+                          type: string
+                        slug:
+                          type: string
+                        title:
+                          type: string
+                        subtitle:
+                          type: string
+      parameters:
+      - name: slugOrId
+        in: path
+        required: true
+        schema:
+          type: string
+  /books/{slugOrId}/chapters:
+    get:
+      summary: GET chapters by slugOrId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  book:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      slug:
+                        type: string
+                      title:
+                        type: string
+                      author:
+                        type: string
+                      time:
+                        type: number
+                      cover:
+                        type: object
+                        properties:
+                          default:
+                            type: object
+                            properties:
+                              src:
+                                type: string
+                              srcset:
+                                type: object
+                                properties:
+                                  2x:
+                                    type: string
+                          sources:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                media:
+                                  type: string
+                                src:
+                                  type: string
+                                srcset:
+                                  type: object
+                                  properties:
+                                    2x:
+                                      type: string
+                      freeDaily:
+                        type: boolean
+                  chapters:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        order_no:
+                          type: number
+                        action_title:
+                          type: string
+                  current_chapter_id:
+                    type: object
+      parameters:
+      - name: slugOrId
+        in: path
+        required: true
+        schema:
+          type: string
+  /books/{slugOrId}/chapters/{chapterId}:
+    get:
+      summary: GET chapters by slugOrId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  order_no:
+                    type: number
+                  action_title:
+                    type: string
+                  text:
+                    type: string
+                  audio_url:
+                    type: string
+                  signed_audio_url:
+                    type: string
+      parameters:
+      - name: slugOrId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: chapterId
+        in: path
+        required: true
+        schema:
+          type: string
+x-path-templates:
+# Remove the ignore: prefix to generate an endpoint with its URL
+# Lines that are closer to the top take precedence, the matching is greedy
+  []
