@@ -35,32 +35,43 @@ def download_book(
         return
     book_dir.mkdir(exist_ok=True)  # We don't make parents in order to avoid user error.
 
-    # prefetch chapter_list and chapters for nicer progress info
-    with console.status("Retrieving list of chapters…"):
-        _ = book.chapter_list
-    # this displays a progress bar itself ↓
-    _ = book.chapters
+    try:
+        # prefetch chapter_list and chapters for nicer progress info
+        with console.status("Retrieving list of chapters…"):
+            _ = book.chapter_list
+        # this displays a progress bar itself ↓
+        _ = book.chapters
 
-    # download raw (YAML)
-    # This comes first so we have all information saved as early as possible.
-    if yaml:
-        with console.status("Downloading raw YAML…"):
-            book.download_raw_yaml(book_dir)
+        # download raw (YAML)
+        # This comes first so we have all information saved as early as possible.
+        if yaml:
+            with console.status("Downloading raw YAML…"):
+                book.download_raw_yaml(book_dir)
 
-    # download text (Markdown)
-    if markdown:
-        with console.status("Downloading text…"):
-            book.download_text_md(book_dir)
+        # download text (Markdown)
+        if markdown:
+            with console.status("Downloading text…"):
+                book.download_text_md(book_dir)
 
-    # download audio
-    if audio and book.is_audio:
-        for chapter in track(book.chapters, description='Downloading audio…'):
-            chapter.download_audio(book_dir)
+        # download audio
+        if audio and book.is_audio:
+            for chapter in track(book.chapters, description='Downloading audio…'):
+                chapter.download_audio(book_dir)
 
-    # download cover
-    if cover:
-        with console.status("Downloading cover…"):
-            book.download_cover(book_dir)
+        # download cover
+        if cover:
+            with console.status("Downloading cover…"):
+                book.download_cover(book_dir)
+    except Exception as e:
+        console.print(f"Error downloading „{book.title}“ – renaming output directory.")
+        error_dir = book_dir.parent / f"{book.slug} – ERROR"
+        i = 0
+        while error_dir.exists() and any(error_dir.iterdir()):
+            i += 1
+            error_dir = book_dir.parent / f"{book.slug} – ERROR ({i})"
+
+        book_dir.replace(target=error_dir)
+        raise
 
 
 @click.command()
