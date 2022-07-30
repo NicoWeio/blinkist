@@ -53,7 +53,7 @@ def download_book(
             book.download_text_md(book_dir)
 
     # download audio
-    if audio:
+    if audio and book.is_audio:
         for chapter in track(book.chapters, description='Downloading audio…'):
             chapter.download_audio(book_dir)
 

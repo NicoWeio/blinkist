@@ -19,6 +19,7 @@ class Book:
         self.language = book_data['language']
         self.slug = book_data['slug']
         self.title = book_data['title']
+        self.is_audio: bool = book_data['isAudio']
 
     def __repr__(self) -> str:
         return f"Book <{self.title}>"

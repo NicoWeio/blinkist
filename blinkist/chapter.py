@@ -23,9 +23,9 @@ class Chapter:
         return self.data
 
     def download_audio(self, target_dir: Path) -> None:
-        if 'signed_audio_url' not in self.data:
+        if not self.data.get('signed_audio_url'):
+            # NOTE: In books where is_audio is true, every chapter should have audio, so this should never happen.
             console.print(f'No audio for chapter {self.id}')
-            # NOTE: Probably, the whole book has no audio. We might want to handle this there.
             return
 
         file_path = target_dir / f"chapter_{self.data['order_no']}.m4a"
