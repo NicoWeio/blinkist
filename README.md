@@ -57,9 +57,13 @@ Now, some aspects are even better than in the original, while others are sill la
 - Downloading arbitrary books with Blinkist Premium is not supported out of the box. It might be easy to get it working, but I didn't test it. There's other tools for that anyway.
 - ID3 tags are not set.
 - The formatting of the markdown export differs a little from @ptrstn's.
-- Apparently, this doesn't work for everyone. [[1]](https://github.com/ptrstn/dailyblink/issues/32#issuecomment-1155508522)
+- Occasionaly, Cloudflare gets in the way.
+[[1]](https://github.com/ptrstn/dailyblink/issues/32#issuecomment-1155508522)
+[[2]](https://github.com/NicoWeio/blinkist/issues/1)
 
 ## Example data
+🛈 Also check out the auto-generated [Swagger API documentation](https://nicoweio.github.io/blinkist/).
+
 <details>
 <summary>
     https://www.blinkist.com/api/free_daily
