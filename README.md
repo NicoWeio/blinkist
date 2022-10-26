@@ -36,6 +36,7 @@ $ pip install -r requirements.txt
 ```
 
 Installation via _setuptools_ and _pip_ is currently not supported.
+Python ≥3.9 is recommended.
 
 ## Usage
 Just run the [`main.py`](main.py) executable, stating what to download and providing a path to a “library directory”, where every book will be saved in its own subdirectory.
