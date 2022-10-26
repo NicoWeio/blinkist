@@ -3,11 +3,11 @@ from pathlib import Path  # typing only
 from typing import List
 
 import yaml
-from rich.progress import track
 
 from .chapter import Chapter
 from .common import api_request_web, request
 from .config import BASE_URL, FILENAME_COVER, FILENAME_RAW, FILENAME_TEXT
+from .console import track
 
 
 class Book:
@@ -53,7 +53,7 @@ class Book:
         """
         chapters = [
             Chapter.from_id(self, chapter['id'])
-            for chapter in track(self.chapter_list, description='Fetching chapters…')
+            for chapter in track(self.chapter_list, description="Fetching chapters…")
         ]
         return chapters
 

@@ -1,9 +1,8 @@
 from functools import cached_property
 
-from rich.progress import track
-
 from .book import Book
 from .common import api_request_app
+from .console import track
 
 
 class CuratedList:

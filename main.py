@@ -2,12 +2,11 @@
 from pathlib import Path
 
 import click
-from rich.progress import track
 
 from blinkist.blinkist import get_free_curated_lists, get_free_daily
 from blinkist.book import Book  # typing only
 from blinkist.config import LANGUAGES
-from blinkist.console import console
+from blinkist.console import console, status, track, track_context
 
 
 def download_book(
@@ -37,7 +36,7 @@ def download_book(
 
     try:
         # prefetch chapter_list and chapters for nicer progress info
-        with console.status("Retrieving list of chapters…"):
+        with status("Retrieving list of chapters…"):
             _ = book.chapter_list
         # this displays a progress bar itself ↓
         _ = book.chapters
@@ -45,12 +44,12 @@ def download_book(
         # download raw (YAML)
         # This comes first so we have all information saved as early as possible.
         if yaml:
-            with console.status("Downloading raw YAML…"):
+            with status("Downloading raw YAML…"):
                 book.download_raw_yaml(book_dir)
 
         # download text (Markdown)
         if markdown:
-            with console.status("Downloading text…"):
+            with status("Downloading text…"):
                 book.download_text_md(book_dir)
 
         # download audio
@@ -60,7 +59,7 @@ def download_book(
 
         # download cover
         if cover:
-            with console.status("Downloading cover…"):
+            with status("Downloading cover…"):
                 book.download_cover(book_dir)
     except Exception as e:
         console.print(f"Error downloading „{book.title}“ – renaming output directory.")
@@ -103,14 +102,15 @@ def main(book_slug, freedaily, freecurated, language, **kwargs):
             books_to_download.add(book)
 
     if freecurated:
-        with console.status("Retrieving free curated lists…"):
+        with track_context:
             # TODO: Don't just look at curated lists, also look directly at free book items.
             curated_lists = get_free_curated_lists()
         print(f"Found {len(curated_lists)} curated lists.")
 
-        for i, curated_list in enumerate(curated_lists, 1):
-            print(f"Curated list ({i}/{len(curated_lists)}): “{curated_list.title}”")
-            books_to_download |= set(curated_list.books)
+        with track_context:
+            for curated_list in track(curated_lists, description="Retrieving books from curated lists…"):
+                print(f"Curated list: “{curated_list.title}”")
+                books_to_download |= set(curated_list.books)
 
     # filter out books in non-selected languages
     books_to_download = [book for book in books_to_download if book.language in languages_to_download]
@@ -119,13 +119,18 @@ def main(book_slug, freedaily, freecurated, language, **kwargs):
         console.print("No books to download.", "Hint: Try --freedaily or --freecurated.", sep="\n")
         return
 
-    for j, book in enumerate(books_to_download, 1):
-        print(f"Book ({j}/{len(books_to_download)}): “{book.title}”")
-        download_book(
-            book=book,
-            language=language,
-            **kwargs
-        )
+    with track_context:
+        for book in (
+            track(books_to_download, description="Downloading books…")
+            if len(books_to_download) > 1
+            else books_to_download
+        ):
+            print(f"Book: “{book.title}”")
+            download_book(
+                book=book,
+                language=language,
+                **kwargs
+            )
 
 
 if __name__ == '__main__':

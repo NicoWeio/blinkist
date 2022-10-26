@@ -2,6 +2,7 @@ from typing import Dict, List
 
 from .book import Book
 from .common import api_request_app, api_request_web
+from .console import track
 from .curated_list import CuratedList
 
 
@@ -29,4 +30,5 @@ def get_free_curated_lists() -> List[CuratedList]:
     """
     Returns a list of books from the "free curated lists" collection.
     """
-    return [CuratedList.from_slug_or_uuid(item['item_id']) for item in get_free_items() if item['item_type'] == 'curated_list']
+    ids = [item['item_id'] for item in get_free_items() if item['item_type'] == 'curated_list']
+    return [CuratedList.from_slug_or_uuid(id_) for id_ in track(ids, description="Retrieving free curated lists…")]
