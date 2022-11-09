@@ -20,6 +20,7 @@ def download_book(
     cover: bool = True,
     # ---
     redownload: bool = False,
+    continue_on_error: bool = False,
 ):
     # check library directory
     # This comes first so we can fail early if the path doesn't exist.
@@ -62,15 +63,22 @@ def download_book(
             with status("Downloading cover…"):
                 book.download_cover(book_dir)
     except Exception as e:
-        console.print(f"Error downloading „{book.title}“ – renaming output directory.")
+        console.print(f"Error downloading „{book.title}“: {e}")
+
         error_dir = book_dir.parent / f"{book.slug} – ERROR"
         i = 0
         while error_dir.exists() and any(error_dir.iterdir()):
             i += 1
             error_dir = book_dir.parent / f"{book.slug} – ERROR ({i})"
 
+        console.print(f"Renaming output directory to “{error_dir.relative_to(book_dir.parent)}”")
         book_dir.replace(target=error_dir)
-        raise
+
+        if continue_on_error:
+            console.print("Continuing with next book… (--continue-on-error was set)")
+        else:
+            console.print("Exiting…", "Hint: Try using --continue-on-error.", sep="\n")
+            raise
 
 
 @click.command()
@@ -79,6 +87,7 @@ def download_book(
 # ▒ general options ↓
 @click.option('--language', '-l', help="Language to download content in. Other languages will be skipped. Defaults to all languages.", type=click.Choice(LANGUAGES), default=None)
 @click.option('--redownload', '-r', help="Redownload all files, even if they already exist. Otherwise, skip all downloads if the book directory exists. Incomplete downloads won't be completed!", is_flag=True, default=False)
+@click.option('--continue-on-error', '-c', help="Continue downloading the next book after an error.", is_flag=True, default=False)
 # ▒ what books to download ↓
 @click.option('--book-slug', help="Download a book by its slug.", type=str, default=None)
 @click.option('--freedaily', help="Download the free daily.", is_flag=True, default=False)
