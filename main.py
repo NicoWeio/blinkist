@@ -21,6 +21,8 @@ def download_book(
     # ---
     redownload: bool = False,
     continue_on_error: bool = False,
+    # ---
+    **kwargs,
 ):
     # check library directory
     # This comes first so we can fail early if the path doesn't exist.
@@ -85,32 +87,28 @@ def download_book(
 # ▒ arguments ↓
 @click.argument('library_dir', type=click.Path(exists=True, dir_okay=True, writable=True, path_type=Path))
 # ▒ general options ↓
+@click.option('--continue-on-error', '-c', help="Continue downloading the next book after an error.", is_flag=True, default=False)
 @click.option('--language', '-l', help="Language to download content in. Other languages will be skipped. Defaults to all languages.", type=click.Choice(LANGUAGES), default=None)
 @click.option('--redownload', '-r', help="Redownload all files, even if they already exist. Otherwise, skip all downloads if the book directory exists. Incomplete downloads won't be completed!", is_flag=True, default=False)
-@click.option('--continue-on-error', '-c', help="Continue downloading the next book after an error.", is_flag=True, default=False)
 # ▒ what books to download ↓
 @click.option('--book-slug', help="Download a book by its slug.", type=str, default=None)
-@click.option('--freedaily', help="Download the free daily.", is_flag=True, default=False)
 @click.option('--freecurated', help="Download the free curated list.", is_flag=True, default=False)
+@click.option('--freedaily', help="Download the free daily.", is_flag=True, default=False)
 # ▒ file format switches ↓
-@click.option('--yaml/--no-yaml', help="Save content as YAML", default=True)
-@click.option('--markdown/--no-markdown', help="Save content as Markdown", default=True)
+# ▒▒ raw
 @click.option('--audio/--no-audio', help="Download audio", default=True)
 @click.option('--cover/--no-cover', help="Download cover", default=True)
-def main(book_slug, freedaily, freecurated, language, **kwargs):
-    languages_to_download = [language] if language else LANGUAGES  # default to all languages
+@click.option('--yaml/--no-yaml', help="Save content as YAML", default=True)
+# ▒▒ processed
+@click.option('--markdown/--no-markdown', help="Save content as Markdown", default=True)
+def main(**kwargs):
+    languages_to_download = [kwargs['language']] if kwargs['language'] else LANGUAGES  # default to all languages
     books_to_download = set()
 
-    if book_slug:
-        books_to_download.add(Book.from_slug(book_slug))
+    if kwargs['book_slug']:
+        books_to_download.add(Book.from_slug(kwargs['book_slug']))
 
-    if freedaily:
-        for language_ in languages_to_download:
-            with console.status(f"Retrieving free daily in {language_}…"):
-                book = get_free_daily(locale=language_)
-            books_to_download.add(book)
-
-    if freecurated:
+    if kwargs['freecurated']:
         with track_context:
             # TODO: Don't just look at curated lists, also look directly at free book items.
             curated_lists = get_free_curated_lists()
@@ -120,6 +118,12 @@ def main(book_slug, freedaily, freecurated, language, **kwargs):
             for curated_list in track(curated_lists, description="Retrieving books from curated lists…"):
                 print(f"Curated list: “{curated_list.title}”")
                 books_to_download |= set(curated_list.books)
+
+    if kwargs['freedaily']:
+        for language_ in languages_to_download:
+            with console.status(f"Retrieving free daily in {language_}…"):
+                book = get_free_daily(locale=language_)
+            books_to_download.add(book)
 
     # filter out books in non-selected languages
     books_to_download = [book for book in books_to_download if book.language in languages_to_download]
@@ -137,7 +141,6 @@ def main(book_slug, freedaily, freecurated, language, **kwargs):
             print(f"Book: “{book.title}”")
             download_book(
                 book=book,
-                language=language,
                 **kwargs
             )
 
