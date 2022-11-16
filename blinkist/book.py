@@ -7,7 +7,7 @@ import yaml
 from .chapter import Chapter
 from .common import api_request_web, request
 from .config import BASE_URL, FILENAME_COVER, FILENAME_RAW, FILENAME_TEXT
-from .console import track
+from .console import status_when_stalled, track
 
 
 class Book:
@@ -73,9 +73,11 @@ class Book:
         file_path = target_dir / f"{FILENAME_COVER}.jpg"
 
         assert url.endswith('.jpg')
-        response = request(url)
+        with status_when_stalled("Fetching cover from Blinkist servers…"):
+            response = request(url)
         assert response.status_code == 200
-        file_path.write_bytes(response.content)
+        with status_when_stalled("Writing cover to disk…"):
+            file_path.write_bytes(response.content)
 
     def download_text_md(self, target_dir: Path) -> None:
         """
@@ -123,7 +125,8 @@ class Book:
         markdown_text = "\n\n\n".join(parts)
 
         file_path = target_dir / f"{FILENAME_TEXT}.md"
-        file_path.write_text(markdown_text)
+        with status_when_stalled("Writing Markdown to disk…"):
+            file_path.write_text(markdown_text)
 
     def serialize(self) -> dict:
         """
@@ -142,8 +145,9 @@ class Book:
         Downloads the raw YAML to the given directory.
         """
         file_path = target_dir / f"{FILENAME_RAW}.yaml"
-        file_path.write_text(yaml.dump(
-            self.serialize(),
-            default_flow_style=False,
-            allow_unicode=True,
-        ))
+        with status_when_stalled("Writing raw YAML to disk…"):
+            file_path.write_text(yaml.dump(
+                self.serialize(),
+                default_flow_style=False,
+                allow_unicode=True,
+            ))

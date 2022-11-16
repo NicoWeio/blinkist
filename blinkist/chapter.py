@@ -1,7 +1,7 @@
 from pathlib import Path  # typing only
 
 from .common import api_request_web, request
-from .console import console
+from .console import console, status_when_stalled
 
 
 class Chapter:
@@ -31,6 +31,8 @@ class Chapter:
         file_path = target_dir / f"chapter_{self.data['order_no']}.m4a"
 
         assert 'm4a' in self.data['signed_audio_url']
-        response = request(self.data['signed_audio_url'])
+        with status_when_stalled("Fetching audio from Blinkist servers…"):
+            response = request(self.data['signed_audio_url'])
         assert response.status_code == 200
-        file_path.write_bytes(response.content)
+        with status_when_stalled("Writing audio to disk…"):
+            file_path.write_bytes(response.content)

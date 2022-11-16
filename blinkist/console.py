@@ -1,8 +1,9 @@
+import threading
+
 from rich.console import Console
 from rich.live import Live
 from rich.progress import (BarColumn, MofNCompleteColumn, Progress,
-                           SpinnerColumn,
-                           TimeRemainingColumn)
+                           SpinnerColumn, TimeRemainingColumn)
 
 console = Console()
 
@@ -39,5 +40,26 @@ def status(message):
 
         def __exit__(self, exc_type, exc_val, exc_tb):
             _job_progress.remove_task(self.job)
+
+    return Status()
+
+
+def status_when_stalled(message, delay_seconds=5):
+    """
+    Displays a status message if the context is active for longer than a moment (as defined by delay_seconds).
+    """
+    class Status:
+        def __enter__(self):
+            self.job = None
+            self.timer = threading.Timer(delay_seconds, self.show_status)
+            self.timer.start()
+
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            self.timer.cancel()
+            if self.job is not None:
+                _job_progress.remove_task(self.job)
+
+        def show_status(self):
+            self.job = _job_progress.add_task(description=message, total=0)
 
     return Status()
