@@ -3,7 +3,7 @@ from pathlib import Path
 
 import click
 
-from blinkist.blinkist import get_free_curated_lists, get_free_daily
+from blinkist.blinkist import get_free_curated_lists, get_free_daily, search_books
 from blinkist.book import Book  # typing only
 from blinkist.config import LANGUAGES
 from blinkist.console import console, status, track, track_context
@@ -94,6 +94,7 @@ def download_book(
 @click.option('--book-slug', help="Download a book by its slug.", type=str, default=None)
 @click.option('--freecurated', help="Download the free curated list.", is_flag=True, default=False)
 @click.option('--freedaily', help="Download the free daily.", is_flag=True, default=False)
+@click.option('--search', help="Search for books. Limited to 20 results by default. Use --limit to override.", type=str, default=None)
 # ▒▒ meta
 @click.option('--limit', help="Limit the number of books to download. Defaults to no limit.", type=int, default=None)
 # ▒ file format switches ↓
@@ -126,6 +127,14 @@ def main(**kwargs):
             with console.status(f"Retrieving free daily in {language_}…"):
                 book = get_free_daily(locale=language_)
             books_to_download.add(book)
+
+    if kwargs['search']:
+        with track_context:
+            books_to_download |= set(search_books(
+                kwargs['search'],
+                languages=(languages_to_download if kwargs['language'] else None),
+                limit=kwargs['limit'],
+            ))
 
     # filter out books in non-selected languages
     books_to_download = [book for book in books_to_download if book.language in languages_to_download]
