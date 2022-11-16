@@ -94,6 +94,8 @@ def download_book(
 @click.option('--book-slug', help="Download a book by its slug.", type=str, default=None)
 @click.option('--freecurated', help="Download the free curated list.", is_flag=True, default=False)
 @click.option('--freedaily', help="Download the free daily.", is_flag=True, default=False)
+# ▒▒ meta
+@click.option('--limit', help="Limit the number of books to download. Defaults to no limit.", type=int, default=None)
 # ▒ file format switches ↓
 # ▒▒ raw
 @click.option('--audio/--no-audio', help="Download audio", default=True)
@@ -127,6 +129,11 @@ def main(**kwargs):
 
     # filter out books in non-selected languages
     books_to_download = [book for book in books_to_download if book.language in languages_to_download]
+
+    # limit number of books to download
+    if kwargs['limit']:
+        # NOTE: kwargs['limit'] == 0 is silently ignored
+        books_to_download = books_to_download[:kwargs['limit']]
 
     if not books_to_download:
         console.print("No books to download.", "Hint: Try --freedaily or --freecurated.", sep="\n")
