@@ -56,9 +56,12 @@ def download_book(
                 book.download_text_md(book_dir)
 
         # download audio
-        if audio and book.is_audio:
-            for chapter in track(book.chapters, description='Downloading audio…'):
-                chapter.download_audio(book_dir)
+        if audio:
+            if book.is_audio:
+                for chapter in track(book.chapters, description="Downloading audio…"):
+                    chapter.download_audio(book_dir)
+            else:
+                console.print("This book has no audio.")
 
         # download cover
         if cover:
