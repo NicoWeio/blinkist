@@ -6,8 +6,11 @@ import tenacity
 
 from .config import CLOUDFLARE_MAX_ATTEMPTS, CLOUDFLARE_WAIT_TIME, HEADERS
 from .console import track
+from .helpers.import_session import import_session
 
 scraper = cloudscraper.create_scraper()
+
+session_cookies = import_session()
 
 
 @tenacity.retry(
@@ -33,14 +36,14 @@ def request(url, **kwargs):
     return response
 
 
-def api_request(base_url: str, endpoint: str, params=None):
+def api_request(base_url: str, endpoint: str, params=None, **kwargs):
     """
     Wrapper for verifying and retrying GET requests to the Blinkist API.
     Returns the parsed JSON response.
     Calls `request` internally.
     """
     url = base_url + endpoint
-    response = request(url, params=params, headers=HEADERS)
+    response = request(url, params=params, headers=HEADERS, **kwargs)
     return response.json()
 
 
@@ -49,7 +52,7 @@ def api_request_web(endpoint: str, params=None):
     Wrapper for verifying and retrying GET requests to the Blinkist web API (https://blinkist.com/api/).
     Returns the parsed JSON response.
     """
-    return api_request('https://blinkist.com/api/', endpoint, params=params)
+    return api_request('https://blinkist.com/api/', endpoint, params=params, cookies=session_cookies)
 
 
 def api_request_app(endpoint: str, params=None):

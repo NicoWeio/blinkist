@@ -84,3 +84,7 @@ def search_books(query: str, limit: Optional[int] = None, language: Optional[str
         for result in track(results, description="Retrieving search results…")
         if result['kind'] == 'book'
     ]
+
+
+def get_me() -> dict:
+    return api_request_web('me')
