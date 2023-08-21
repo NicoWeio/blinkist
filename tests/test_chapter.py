@@ -1,3 +1,5 @@
+import pytest
+
 from blinkist.book import Book
 from blinkist.chapter import Chapter
 
@@ -15,6 +17,7 @@ def test_download_audio(tmp_path):
     assert (tmp_path / 'chapter_0.m4a').is_file()
 
 
+@pytest.mark.skip(reason="There don't seem to be any books of this kind left.")
 def test_download_audio_without_audio(tmp_path):
     book_without_audio = Book.from_slug('100-plus-en')
     chapter_without_audio = book_without_audio.chapters[0]

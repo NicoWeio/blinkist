@@ -62,9 +62,6 @@ jobs:
       - name: Test `--book-slug`
         run: |
           python main.py --book-slug get-smart-en /home/runner/Musik/Blinkist/
-      - name: Test downloading a book without audio
-        run: |
-          python main.py --book-slug a-better-world-inc-en /home/runner/Musik/Blinkist/
       - name: Check the directory contents
         run: |
           ls -hl /home/runner/Musik/Blinkist/*
