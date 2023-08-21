@@ -149,6 +149,8 @@ def main(**kwargs):
 
     if not books_to_download:
         console.print("No books to download.", "Hint: Try --freedaily or --freecurated.", sep="\n")
+        if kwargs['language']:
+            console.print("Hint: Maybe there were no books in the specified --language?")
         return
 
     with track_context:
