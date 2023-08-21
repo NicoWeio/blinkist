@@ -9,11 +9,12 @@ def test_get_free_daily():
     assert book_de.slug != book_en.slug
 
 
-def test_get_free_curated_lists():
-    free_curated_lists = blinkist.get_free_curated_lists()
-    assert len(free_curated_lists) > 0
-    assert free_curated_lists[0].title
-    assert free_curated_lists[0].books
+def test_get_latest_collections():
+    collections = blinkist.get_latest_collections()
+    assert len(collections) > 0
+    assert len(collections) == 8
+    assert collections[0].title
+    assert collections[0].books
 
 
 class TestSearchBooks:

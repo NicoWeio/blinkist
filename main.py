@@ -3,7 +3,8 @@ from pathlib import Path
 
 import click
 
-from blinkist.blinkist import get_free_curated_lists, get_free_daily, search_books
+from blinkist.blinkist import (get_free_daily, get_latest_collections,
+                               search_books)
 from blinkist.book import Book  # typing only
 from blinkist.config import LANGUAGES
 from blinkist.console import console, status, track, track_context
@@ -95,8 +96,8 @@ def download_book(
 @click.option('--redownload', '-r', help="Redownload all files, even if they already exist. Otherwise, skip all downloads if the book directory exists. Incomplete downloads won't be completed!", is_flag=True, default=False)
 # ▒ what books to download ↓
 @click.option('--book-slug', help="Download a book by its slug.", type=str, default=None)
-@click.option('--freecurated', help="Download the free curated list.", is_flag=True, default=False)
 @click.option('--freedaily', help="Download the free daily.", is_flag=True, default=False)
+@click.option('--latest-collections', help="Download the latest collections. Limited to 8 results by default; this limit cannot currently be changed.", is_flag=True, default=False)
 @click.option('--search', help="Search for books. Limited to 20 results by default. Use --limit to override.", type=str, default=None)
 # ▒▒ meta
 @click.option('--limit', help="Limit the number of books to download. Defaults to no limit.", type=int, default=None)
@@ -114,16 +115,16 @@ def main(**kwargs):
     if kwargs['book_slug']:
         books_to_download.add(Book.from_slug(kwargs['book_slug']))
 
-    if kwargs['freecurated']:
+    if kwargs['latest_collections']:
         with track_context:
-            # TODO: Don't just look at curated lists, also look directly at free book items.
-            curated_lists = get_free_curated_lists()
-        print(f"Found {len(curated_lists)} curated lists.")
+            # NOTE: The `--limit` option is for the number of books, not collections, so we don't pass it here.
+            collections = get_latest_collections()
+        print(f"Found {len(collections)} collections.")
 
         with track_context:
-            for curated_list in track(curated_lists, description="Retrieving books from curated lists…"):
-                print(f"Curated list: “{curated_list.title}”")
-                books_to_download |= set(curated_list.books)
+            for collection in track(collections, description="Retrieving books from collections…"):
+                print(f"Collection: “{collection.title}”")
+                books_to_download |= set(collection.books)
 
     if kwargs['freedaily']:
         for language_ in languages_to_download:
