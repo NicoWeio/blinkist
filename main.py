@@ -77,8 +77,8 @@ def download_book(
             i += 1
             error_dir = book_dir.parent / f"{book.slug} – ERROR ({i})"
 
-        console.print(f"Renaming output directory to “{error_dir.relative_to(book_dir.parent)}”")
         book_dir.replace(target=error_dir)
+        console.print(f"Renamed output directory to “{error_dir.relative_to(book_dir.parent)}”")
 
         if continue_on_error:
             console.print("Continuing with next book… (--continue-on-error was set)")
