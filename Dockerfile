@@ -1,9 +1,12 @@
- # Little tut:
- # Build image: docker build . -t blinkist
- # Run image: docker run --rm -it -v /Users/<user>/Desktop/dailyblink:/library blinkist --freedaily /library
- 
- FROM python:3.10-alpine
- COPY . /app/
- RUN pip install --requirement /app/requirements.txt
- WORKDIR /app
- ENTRYPOINT ["python", "main.py"]
+# === BASIC USAGE ===
+# Build image: docker build . -t blinkist
+# Run image: docker run --rm -it -v /path/to/your/library:/data blinkist /data --freedaily
+#   (adjust these parts:)           ^^^^^^^^^^^^^^^^^^^^^                      ^^^^^^^^^^^
+
+FROM python:3.11-alpine
+WORKDIR /app
+COPY requirements.txt requirements.txt
+RUN pip3 install --requirement requirements.txt
+COPY . .
+WORKDIR /data
+ENTRYPOINT ["python3", "/app/main.py"]
