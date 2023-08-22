@@ -93,6 +93,8 @@ def download_book(
 # ▒ general options ↓
 @click.option('--continue-on-error', '-c', help="Continue downloading the next book after an error.", is_flag=True, default=False)
 @click.option('--language', '-l', help="Language to download content in. Other languages will be skipped. Defaults to all languages.", type=click.Choice(LANGUAGES), default=None)
+# FIXME: Invocations with --no-download shouldn't need the library_dir argument
+@click.option('--no-download', '-n', help="Don't actually save anything, just print what would be downloaded.", is_flag=True, default=False)
 @click.option('--redownload', '-r', help="Redownload all files, even if they already exist. Otherwise, skip all downloads if the book directory exists. Incomplete downloads won't be completed!", is_flag=True, default=False)
 # ▒ what books to download ↓
 @click.option('--book-slug', help="Download a book by its slug.", type=str, default=None)
@@ -166,10 +168,11 @@ def main(**kwargs):
             else books_to_download
         ):
             print(f"Book: “{book.title}”")
-            download_book(
-                book=book,
-                **kwargs
-            )
+            if not kwargs["no_download"]:
+                download_book(
+                    book=book,
+                    **kwargs
+                )
 
 
 if __name__ == '__main__':
