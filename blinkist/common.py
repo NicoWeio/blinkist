@@ -1,10 +1,11 @@
+import logging
 from pathlib import Path
 
 import cloudscraper
 import tenacity
 
 from .config import CLOUDFLARE_MAX_ATTEMPTS, CLOUDFLARE_WAIT_TIME, HEADERS
-from .console import console, track
+from .console import track
 
 scraper = cloudscraper.create_scraper()
 
@@ -13,7 +14,7 @@ scraper = cloudscraper.create_scraper()
     retry=tenacity.retry_if_exception_type(cloudscraper.exceptions.CloudflareChallengeError),
     wait=tenacity.wait_fixed(CLOUDFLARE_WAIT_TIME),
     stop=tenacity.stop_after_attempt(CLOUDFLARE_MAX_ATTEMPTS),
-    before_sleep=lambda retry_state: console.print(f"Retrying in {retry_state.next_action.sleep} seconds…"),
+    before_sleep=lambda retry_state: logging.info(f"Retrying in {retry_state.next_action.sleep} seconds…"),
 )
 def request(url, **kwargs):
     """

@@ -25,7 +25,7 @@ def track(iterable, description="Working...", total=None):
     _job_progress.remove_task(my_job)
 
 
-track_context = Live(_job_progress, refresh_per_second=10, console=console)
+track_context = Live(_job_progress, refresh_per_second=10)
 
 
 def status(message):

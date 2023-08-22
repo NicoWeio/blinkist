@@ -1,13 +1,23 @@
 #!/usr/bin/env python3
+import logging
 from pathlib import Path
 
 import click
+from rich.logging import RichHandler
 
 from blinkist.blinkist import (get_free_daily, get_latest_collections,
                                get_trending_books, search_books)
 from blinkist.book import Book  # typing only
 from blinkist.config import LANGUAGES
 from blinkist.console import console, status, track, track_context
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(message)s",
+    datefmt="[%X]",
+    handlers=[RichHandler()],
+)
+logging.getLogger('urllib3').setLevel(logging.WARNING)
 
 
 def download_book(
@@ -33,7 +43,7 @@ def download_book(
     # book_dir = library_dir / f"{datetime.today().strftime('%Y-%m-%d')} – {book.slug}"
     book_dir = library_dir / book.slug
     if book_dir.exists() and not redownload:
-        console.print(f"Skipping „{book.title}“ – already downloaded.")
+        logging.info(f"Skipping “{book.title}” – already downloaded.")
         # TODO: this doss not check if the download was complete! Can we do something about that
         return
     book_dir.mkdir(exist_ok=True)  # We don't make parents in order to avoid user error.
@@ -62,14 +72,14 @@ def download_book(
                 for chapter in track(book.chapters, description="Downloading audio…"):
                     chapter.download_audio(book_dir)
             else:
-                console.print("This book has no audio.")
+                logging.warning("This book has no audio.")
 
         # download cover
         if cover:
             with status("Downloading cover…"):
                 book.download_cover(book_dir)
     except Exception as e:
-        console.print(f"Error downloading „{book.title}“: {e}")
+        logging.error(f"Error downloading “{book.title}”: {e}")
 
         error_dir = book_dir.parent / f"{book.slug} – ERROR"
         i = 0
@@ -78,12 +88,13 @@ def download_book(
             error_dir = book_dir.parent / f"{book.slug} – ERROR ({i})"
 
         book_dir.replace(target=error_dir)
-        console.print(f"Renamed output directory to “{error_dir.relative_to(book_dir.parent)}”")
+        logging.warning(f"Renamed output directory to “{error_dir.relative_to(book_dir.parent)}”")
 
         if continue_on_error:
-            console.print("Continuing with next book… (--continue-on-error was set)")
+            logging.info("Continuing with next book… (--continue-on-error was set)")
         else:
-            console.print("Exiting…", "Hint: Try using --continue-on-error.", sep="\n")
+            logging.critical("Exiting…")
+            logging.critical("Hint: Try using --continue-on-error.")
             raise
 
 
@@ -122,11 +133,11 @@ def main(**kwargs):
         with track_context:
             # NOTE: The `--limit` option is for the number of books, not collections, so we don't pass it here.
             collections = get_latest_collections()
-        print(f"Found {len(collections)} collections.")
+        logging.info(f"Found {len(collections)} collections.")
 
         with track_context:
             for collection in track(collections, description="Retrieving books from collections…"):
-                print(f"Collection: “{collection.title}”")
+                logging.info(f"Collection: “{collection.title}”")
                 books_to_download |= set(collection.books)
 
     if kwargs['freedaily']:
@@ -156,9 +167,10 @@ def main(**kwargs):
         books_to_download = books_to_download[:kwargs['limit']]
 
     if not books_to_download:
-        console.print("No books to download.", "Hint: Try --freedaily or --freecurated.", sep="\n")
+        logging.info("No books to download.")
+        logging.info("Hint: Try --freedaily or --freecurated.")
         if kwargs['language']:
-            console.print("Hint: Maybe there were no books in the specified --language?")
+            logging.info("Hint: Maybe there were no books in the specified --language?")
         return
 
     with track_context:
@@ -167,7 +179,7 @@ def main(**kwargs):
             if len(books_to_download) > 1
             else books_to_download
         ):
-            print(f"Book: “{book.title}”")
+            logging.info(f"Book: “{book.title}”")
             if not kwargs["no_download"]:
                 download_book(
                     book=book,
