@@ -56,40 +56,23 @@ def get_latest_collections(limit: Optional[int] = None) -> List[CuratedList]:
     ]
 
 
-def search_books(query: str, limit: Optional[int] = None, languages: Optional[List[str]] = None) -> List[Book]:
+def search_books(query: str, limit: Optional[int] = None, language: Optional[str] = None) -> List[Book]:
     """
-    Search for books using the Algolia API.
-    20 results are returned by default.
+    Search for books using Blinkist's API.
+    40 results are returned by default.
     """
-    filter_languages = " OR ".join(f'language:{language}' for language in languages) if languages else None
-
-    data = {
-        'query': query,
-        'attributesToRetrieve': [
-            'title',
-            'author',
-            'slug',
-            'language',
-            'bundle'
-        ],
-        # 'hitsPerPage': limit,
-        # 'attributesToHighlight': [
-        #     'title',
-        #     'author'
-        # ],
-        # 'filters': 'publishedAt < 1668591285 AND (language:de OR language:en)',
+    params: dict[str, str | int] = {
+        'q': query,
     }
     if limit:
-        # NOTE: Silently ignores limit == 0
-        data['hitsPerPage'] = limit
-    if filter_languages:
-        data['filters'] = filter_languages
+        params['limit'] = limit
+    if language:
+        params['lang'] = language
+        params['locale'] = language
 
-    r = scraper.post(
-        'https://p3sczpah8s-dsn.algolia.net/1/indexes/books-production/query',
-        headers=HEADERS_ALGOLIA,
-        json=data,
-    )
-    r.raise_for_status()
-    slugs = [result['slug'] for result in r.json()['hits']]
-    return [Book.from_slug(slug) for slug in track(slugs, description="Retrieving search results…")]
+    results = api_request_web('search', params=params)['results']
+    return [
+        Book.from_slug(result['slug'])
+        for result in track(results, description="Retrieving search results…")
+        if result['kind'] == 'book'
+    ]

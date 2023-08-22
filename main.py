@@ -150,7 +150,8 @@ def main(**kwargs):
         with track_context:
             books_to_download |= set(search_books(
                 kwargs['search'],
-                languages=(languages_to_download if kwargs['language'] else None),
+                # FIXME: This relies on the fact that we can only pass one --language.
+                language=(languages_to_download[0] if kwargs['language'] else None),
                 limit=kwargs['limit'],
             ))
 

@@ -20,17 +20,17 @@ def test_get_latest_collections():
 class TestSearchBooks:
     def test_default(self):
         books = blinkist.search_books("smart")
-        assert len(books) == 20
+        assert len(books) <= 40
 
     def test_limit(self):
         books = blinkist.search_books("smart", limit=5)
-        assert len(books) == 5
+        assert len(books) <= 5  # NOTE: We use <= becauase search_books filters out non-book results.
 
     def test_languages(self):
-        books = blinkist.search_books("smart", languages=['de', 'en'], limit=5)
-        assert len(books) == 5
+        books = blinkist.search_books("smart", limit=10)
+        assert len(books) <= 10
         assert all(book.language in ['de', 'en'] for book in books)
 
-        books = blinkist.search_books("smart", languages=['de'], limit=5)
-        assert len(books) == 5
+        books = blinkist.search_books("smart", language='de', limit=10)
+        assert len(books) <= 10
         assert all(book.language == 'de' for book in books)
