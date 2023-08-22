@@ -88,7 +88,10 @@ def download_book(
             error_dir = book_dir.parent / f"{book.slug} – ERROR ({i})"
 
         book_dir.replace(target=error_dir)
-        logging.warning(f"Renamed output directory to “{error_dir.relative_to(book_dir.parent)}”")
+        # logging.warning(f"Renamed output directory to “{error_dir.relative_to(book_dir.parent)}”")
+        logging.warning(
+            # TODO: this doesn't work
+            f"Renamed output directory to [link=file://{error_dir.absolute()}]“{error_dir.relative_to(book_dir.parent)}”[/link]", extra={'markup': True})
 
         if continue_on_error:
             logging.info("Continuing with next book… (--continue-on-error was set)")
@@ -179,7 +182,7 @@ def main(**kwargs):
             if len(books_to_download) > 1
             else books_to_download
         ):
-            logging.info(f"Book: “{book.title}”")
+            logging.info(f"Book: [link={book.url}]“{book.title}”[/link]", extra={'markup': True})
             if not kwargs["no_download"]:
                 download_book(
                     book=book,

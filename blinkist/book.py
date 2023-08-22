@@ -5,7 +5,7 @@ from typing import List
 import yaml
 
 from .chapter import Chapter
-from .common import api_request_web, download, request
+from .common import api_request_web, download
 from .config import BASE_URL, FILENAME_COVER, FILENAME_RAW, FILENAME_TEXT
 from .console import track
 
@@ -19,6 +19,7 @@ class Book:
         self.language = book_data['language']
         self.slug = book_data['slug']
         self.title = book_data['title']
+        self.url = book_data['url']
         self.is_audio: bool = book_data['isAudio']
 
     def __repr__(self) -> str:
