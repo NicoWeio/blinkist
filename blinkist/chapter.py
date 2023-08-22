@@ -1,6 +1,6 @@
 from pathlib import Path  # typing only
 
-from .common import api_request_web, request
+from .common import api_request_web, download, request
 from .console import console
 
 
@@ -31,6 +31,4 @@ class Chapter:
         file_path = target_dir / f"chapter_{self.data['order_no']}.m4a"
 
         assert 'm4a' in self.data['signed_audio_url']
-        response = request(self.data['signed_audio_url'])
-        assert response.status_code == 200
-        file_path.write_bytes(response.content)
+        download(self.data['signed_audio_url'], file_path)

@@ -5,7 +5,7 @@ from typing import List
 import yaml
 
 from .chapter import Chapter
-from .common import api_request_web, request
+from .common import api_request_web, download, request
 from .config import BASE_URL, FILENAME_COVER, FILENAME_RAW, FILENAME_TEXT
 from .console import track
 
@@ -73,9 +73,7 @@ class Book:
         file_path = target_dir / f"{FILENAME_COVER}.jpg"
 
         assert url.endswith('.jpg')
-        response = request(url)
-        assert response.status_code == 200
-        file_path.write_bytes(response.content)
+        download(url, file_path)
 
     def download_text_md(self, target_dir: Path) -> None:
         """

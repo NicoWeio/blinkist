@@ -1,8 +1,10 @@
+from pathlib import Path
+
 import cloudscraper
 import tenacity
 
 from .config import CLOUDFLARE_MAX_ATTEMPTS, CLOUDFLARE_WAIT_TIME, HEADERS
-from .console import console
+from .console import console, track
 
 scraper = cloudscraper.create_scraper()
 
@@ -55,3 +57,26 @@ def api_request_app(endpoint: str, params=None):
     Returns the parsed JSON response.
     """
     return api_request('https://api.blinkist.com/', endpoint, params=params)
+
+
+def download(url: str, file_path: Path):
+    """
+    Downloads a file from the given URL to the given path
+    and shows a progress bar!
+    """
+    # adapted from https://stackoverflow.com/a/15645088
+    with open(file_path, 'wb') as f:
+        response = request(url, stream=True)
+        assert response.status_code == 200
+        total_length = response.headers.get('content-length')
+
+        if total_length is None:
+            f.write(response.content)
+        else:
+            for data in track(
+                # FIXME: The displayed numbers won't be easily interpretable.
+                response.iter_content(chunk_size=4096),
+                total=int(total_length) // 4096,
+                description="Downloading…",
+            ):
+                f.write(data)
