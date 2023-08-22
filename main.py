@@ -4,7 +4,7 @@ from pathlib import Path
 import click
 
 from blinkist.blinkist import (get_free_daily, get_latest_collections,
-                               search_books)
+                               get_trending_books, search_books)
 from blinkist.book import Book  # typing only
 from blinkist.config import LANGUAGES
 from blinkist.console import console, status, track, track_context
@@ -99,6 +99,7 @@ def download_book(
 @click.option('--freedaily', help="Download the free daily.", is_flag=True, default=False)
 @click.option('--latest-collections', help="Download the latest collections. Limited to 8 results by default; this limit cannot currently be changed.", is_flag=True, default=False)
 @click.option('--search', help="Search for books. Limited to 20 results by default. Use --limit to override.", type=str, default=None)
+@click.option('--trending', help="Download trending books. Limited to 8 results by default. Use --limit to override.", is_flag=True, default=False)
 # ▒▒ meta
 @click.option('--limit', help="Limit the number of books to download. Defaults to no limit.", type=int, default=None)
 # ▒ file format switches ↓
@@ -139,6 +140,10 @@ def main(**kwargs):
                 languages=(languages_to_download if kwargs['language'] else None),
                 limit=kwargs['limit'],
             ))
+
+    if kwargs['trending']:
+        with track_context:
+            books_to_download |= set(get_trending_books(limit=kwargs['limit']))
 
     # filter out books in non-selected languages
     books_to_download = [book for book in books_to_download if book.language in languages_to_download]
