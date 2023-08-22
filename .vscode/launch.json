@@ -1,0 +1,52 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Select download option",
+            "type": "python",
+            "request": "launch",
+            "program": "main.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "cwd": "${workspaceFolder}",
+            "args": [
+                "/tmp",
+                // "--no-download",
+                "${input:downloadOption}",
+            ]
+        },
+        {
+            "name": "Download from slug",
+            "type": "python",
+            "request": "launch",
+            "program": "main.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "cwd": "${workspaceFolder}",
+            "args": [
+                "/tmp",
+                // "--no-download",
+                "--book-slug",
+                "${input:bookSlug}",
+            ]
+        },
+    ],
+    "inputs": [
+        {
+            "id": "bookSlug",
+            "type": "promptString",
+            "description": "Book slug",
+            "default": "get-smart-en"
+        },
+        {
+            "id": "downloadOption",
+            "type": "pickString",
+            "description": "Download option",
+            "options": [
+                "--freedaily",
+                "--latest-collections",
+                "--trending",
+            ]
+        },
+    ]
+}
