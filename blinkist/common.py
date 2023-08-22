@@ -1,4 +1,4 @@
-from pathlib import Path
+from pathlib import Path # typing only
 
 import cloudscraper
 import tenacity

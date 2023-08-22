@@ -1,7 +1,5 @@
-from typing import Dict, List, Optional
-
 from .book import Book
-from .common import api_request_app, api_request_web, scraper
+from .common import api_request_web, scraper
 from .config import HEADERS_ALGOLIA
 from .console import track
 from .curated_list import CuratedList
@@ -19,7 +17,7 @@ def get_free_daily(locale) -> Book:
     return Book(free_daily['book'])
 
 
-def get_trending_books(limit: Optional[int] = None) -> List[Book]:
+def get_trending_books(limit: int | None = None) -> list[Book]:
     """
     Returns the "free daily" book for the given locale.
 
@@ -39,7 +37,7 @@ def get_trending_books(limit: Optional[int] = None) -> List[Book]:
     ]
 
 
-def get_latest_collections(limit: Optional[int] = None) -> List[CuratedList]:
+def get_latest_collections(limit: int | None = None) -> list[CuratedList]:
     """
     Returns CuratedLists from the "Latest collections" feed section.
     NOTE: As of writing, always returns English results.
@@ -56,7 +54,7 @@ def get_latest_collections(limit: Optional[int] = None) -> List[CuratedList]:
     ]
 
 
-def search_books(query: str, limit: Optional[int] = None, languages: Optional[List[str]] = None) -> List[Book]:
+def search_books(query: str, limit: int | None = None, languages: list[str] | None = None) -> list[Book]:
     """
     Search for books using the Algolia API.
     20 results are returned by default.

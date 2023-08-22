@@ -1,11 +1,10 @@
 from functools import cached_property
 from pathlib import Path  # typing only
-from typing import List
 
 import yaml
 
 from .chapter import Chapter
-from .common import api_request_web, download, request
+from .common import api_request_web, download
 from .config import BASE_URL, FILENAME_COVER, FILENAME_RAW, FILENAME_TEXT
 from .console import track
 
@@ -38,7 +37,7 @@ class Book:
         return Book(api_request_web(f'books/{slug}'))
 
     @cached_property
-    def chapter_list(self) -> List[dict]:
+    def chapter_list(self) -> list[dict]:
         """
         Returns the chapter list straight from the API.
         Does not include their respective contents.
@@ -46,7 +45,7 @@ class Book:
         return api_request_web(f'books/{self.slug}/chapters')['chapters']
 
     @cached_property
-    def chapters(self) -> List[Chapter]:
+    def chapters(self) -> list[Chapter]:
         """
         Returns a list of Chapter objects, which contain the actual content.
         Shows a progress bar while downloading.
