@@ -123,7 +123,7 @@ class Book:
         markdown_text = "\n\n\n".join(parts)
 
         file_path = target_dir / f"{FILENAME_TEXT}.md"
-        file_path.write_text(markdown_text, encoding="utf-8")
+        file_path.write_text(markdown_text, encoding='utf-8')
 
     def serialize(self) -> dict:
         """
@@ -142,8 +142,11 @@ class Book:
         Downloads the raw YAML to the given directory.
         """
         file_path = target_dir / f"{FILENAME_RAW}.yaml"
-        file_path.write_text(yaml.dump(
-            self.serialize(),
-            default_flow_style=False,
-            allow_unicode=True,
-        ), encoding="utf-8")
+        file_path.write_text(
+            yaml.dump(
+                self.serialize(),
+                default_flow_style=False,
+                allow_unicode=True,
+            ),
+            encoding='utf-8',
+        )
