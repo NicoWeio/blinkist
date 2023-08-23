@@ -175,7 +175,7 @@ def main(**kwargs):
 
     if not books_to_download:
         logging.info("No books to download.")
-        logging.info("Hint: Try --freedaily or --freecurated.")
+        logging.info("Hint: Try passing an option like --freedaily.")
         if kwargs['language']:
             logging.info("Hint: Maybe there were no books in the specified --language?")
         return

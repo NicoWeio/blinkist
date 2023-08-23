@@ -22,8 +22,7 @@ To be precise, it saves…
   - ⚠️ As of writing, no authentication is required to access _any_ book, a benefit which _should_ require a subscription _in theory_. Do consider the legal and moral implications of using this.
 - `--freedaily`: Each day, Blinkist offers a free book for each locale.
   - [Website (en)](https://www.blinkist.com/en/content/daily)
-- `--freecurated`: There are some curated lists of books, which in turn are free.
-  - for example: [“Expert Picks: Elon Musk” (de)](https://www.blinkist.com/de/content/collections/expert-picks-elon-musk)
+- Further options include `--book-slug`, `--latest`, `--latest-collections`, `--search`, and `--trending`. Refer to `main.py --help` for more information.
 - 🛈 If you pass multiple of these options, all of them will be used.
 
 ## Installation
