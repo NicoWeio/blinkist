@@ -61,6 +61,33 @@ Now, some aspects are even better than in the original, while others are sill la
 [[1]](https://github.com/ptrstn/dailyblink/issues/32#issuecomment-1155508522)
 [[2]](https://github.com/NicoWeio/blinkist/issues/1)
 
+## Comparison
+- https://github.com/ptrstn/dailyblink
+  - 🏅 inspiration for this project
+  - (👎) relies on web scraping (using BeautifulSoup4) [¹](https://github.com/ptrstn/dailyblink/blob/master/dailyblink/core.py)
+  - 👎 last commit was in 2021
+  - 👎 currently (at least partially) [broken](https://github.com/ptrstn/dailyblink/issues/32)
+- https://github.com/leoncvlt/blinkist-scraper
+  - 👍 more features
+    - categories
+    - formats: HTML, EPUB, PDF
+    - embedding of cover art into concatenated audio file
+  - (👎) relies on a mixture of web scraping (using Selenium) and API requests [¹](https://github.com/leoncvlt/blinkist-scraper/blob/master/blinkistscraper/scraper.py)
+  - 👎 relies on ChromeDriver (larger resource footprint)
+  - 👎 last commit was in 2021
+- https://github.com/rajeshbhavikatti/daily_blink_to_notion
+  - borrows some of my code 😇
+  - 👎 very specific use case
+- https://github.com/luckylittle/blinkist-m4a-downloader
+  - written in Go
+  - (👎) relies on web scraping (using [colly](https://github.com/gocolly/colly)) [¹](https://github.com/luckylittle/blinkist-m4a-downloader/blob/master/download/download.go)
+- https://github.com/orgarafatm/blinkist
+  - (👎) relies on web scraping (using BeautifulSoup4) [¹](https://github.com/orgarafatm/blinkist/blob/master/blinkist_daily_scraper.py)
+  - 👎 contains scraped content
+
+> - https://github.com/karlicoss/blinkist-backup
+>   - only downloads highlights and the library booklist
+
 ## Example data
 🛈 Also check out the auto-generated [Swagger API documentation](https://nicoweio.github.io/blinkist/).
 
