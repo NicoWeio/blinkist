@@ -5,8 +5,9 @@ from pathlib import Path
 import click
 from rich.logging import RichHandler
 
-from blinkist.blinkist import (get_free_daily, get_latest_collections,
-                               get_trending_books, search_books)
+from blinkist.blinkist import (get_free_daily, get_latest_books,
+                               get_latest_collections, get_trending_books,
+                               search_books)
 from blinkist.book import Book  # typing only
 from blinkist.config import LANGUAGES
 from blinkist.console import console, status, track, track_context
@@ -110,6 +111,7 @@ def download_book(
 # ▒ what books to download ↓
 @click.option('--book-slug', help="Download a book by its slug.", type=str, default=None)
 @click.option('--freedaily', help="Download the free daily.", is_flag=True, default=False)
+@click.option('--latest', help="Download the latest books. Limited to 8 results by default. Use --limit to override.", is_flag=True, default=False)
 @click.option('--latest-collections', help="Download the latest collections. Limited to 8 results by default; this limit cannot currently be changed.", is_flag=True, default=False)
 @click.option('--search', help="Search for books. Limited to 20 results by default. Use --limit to override.", type=str, default=None)
 @click.option('--trending', help="Download trending books. Limited to 8 results by default. Use --limit to override.", is_flag=True, default=False)
@@ -154,6 +156,10 @@ def main(**kwargs):
                 language=(languages_to_download[0] if kwargs['language'] else None),
                 limit=kwargs['limit'],
             ))
+
+    if kwargs['latest']:
+        with track_context:
+            books_to_download |= set(get_latest_books(limit=kwargs['limit']))
 
     if kwargs['trending']:
         with track_context:

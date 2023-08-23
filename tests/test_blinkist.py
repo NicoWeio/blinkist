@@ -9,6 +9,20 @@ def test_get_free_daily():
     assert book_de.slug != book_en.slug
 
 
+def test_get_latest_books():
+    books = blinkist.get_latest_books()
+    assert len(books) > 0
+    assert len(books) <= 8  # NOTE: We use <= becauase search_books filters out non-book results.
+    assert books[0].title
+
+
+def test_get_trending_books():
+    books = blinkist.get_trending_books()
+    assert len(books) > 0
+    assert len(books) <= 8  # NOTE: We use <= becauase search_books filters out non-book results.
+    assert books[0].title
+
+
 def test_get_latest_collections():
     collections = blinkist.get_latest_collections()
     assert len(collections) > 0

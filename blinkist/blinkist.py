@@ -19,13 +19,21 @@ def get_free_daily(locale) -> Book:
     return Book(free_daily['book'])
 
 
-def get_trending_books(limit: Optional[int] = None) -> List[Book]:
-    """
-    Returns the "free daily" book for the given locale.
+def get_latest_books(limit: Optional[int] = None) -> List[Book]:
+    params = {
+        # 'locale': locale,
+    }
+    if limit:
+        params['limit'] = limit
+    trending_content_items = api_request_web('latest_content_items', params=params)['content_items']
+    return [
+        Book.from_slug(item['slug'])
+        for item in track(trending_content_items, description="Retrieving latest books…")
+        if item['kind'] == 'book'
+    ]
 
-    NOTE: There might be a subtle difference between `locale` and `language`.
-    I'll stick with Blinkist's naming convention here.
-    """
+
+def get_trending_books(limit: Optional[int] = None) -> List[Book]:
     params = {
         # 'locale': locale,
     }
