@@ -25,6 +25,8 @@ def download_book(
     book: Book,
     language: str,
     library_dir: Path,
+    name_format: str = None,
+    direct: bool = False,
     # ---
     yaml: bool = True,
     markdown: bool = True,
@@ -43,11 +45,24 @@ def download_book(
     # setup book directory
     # book_dir = library_dir / f"{datetime.today().strftime('%Y-%m-%d')} – {book.slug}"
     book_dir = library_dir / book.slug
-    if book_dir.exists() and not redownload:
+    if direct:
+        book_dir = library_dir
+    if book_dir.exists() and not redownload and not direct:
         logging.info(f"Skipping “{book.title}” – already downloaded.")
         # TODO: this doss not check if the download was complete! Can we do something about that
         return
-    book_dir.mkdir(exist_ok=True)  # We don't make parents in order to avoid user error.
+    if not direct:
+        book_dir.mkdir(exist_ok=True)  # We don't make parents in order to avoid user error.
+
+    file_name = None
+    if name_format == "slug":
+        file_name = book.slug
+    elif name_format == "title":
+        file_name = book.title
+    elif name_format == "title-upper":
+        file_name = book.title.upper()
+    elif name_format == "id":
+        file_name = book.id
 
     try:
         # prefetch chapter_list and chapters for nicer progress info
@@ -60,25 +75,25 @@ def download_book(
         # This comes first so we have all information saved as early as possible.
         if yaml:
             with status("Downloading raw YAML…"):
-                book.download_raw_yaml(book_dir)
+                book.download_raw_yaml(book_dir, file_name)
 
         # download text (Markdown)
         if markdown:
             with status("Downloading text…"):
-                book.download_text_md(book_dir)
+                book.download_text_md(book_dir, file_name)
 
         # download audio
         if audio:
             if book.is_audio:
                 for chapter in track(book.chapters, description="Downloading audio…"):
-                    chapter.download_audio(book_dir)
+                    chapter.download_audio(book_dir, file_name)
             else:
                 logging.warning("This book has no audio.")
 
         # download cover
         if cover:
             with status("Downloading cover…"):
-                book.download_cover(book_dir)
+                book.download_cover(book_dir, file_name)
     except Exception as e:
         logging.error(f"Error downloading “{book.title}”: {e}")
 
@@ -117,6 +132,12 @@ def download_book(
 @click.option('--trending', help="Download trending books. Limited to 8 results by default. Use --limit to override.", is_flag=True, default=False)
 # ▒▒ meta
 @click.option('--limit', help="Limit the number of books to download. Defaults to no limit.", type=int, default=None)
+@click.option('--name-format', '-n', help='''Sets file names format. By default no format is set, and generic names from `config.py` are used. Supported values:
+    - "slug": Book title slug (e.g. "the-4-hour-workweek")
+    - "title": Book title (e.g. "The 4-Hour Workweek")
+    - "title-upper": Book title in uppercase (e.g. "THE 4-HOUR WORKWEEK")
+    - "id": Book ID (e.g. "617be9b56cee07000723559e")''', type=str, default=None)
+@click.option('--direct', help="Save directly in parent folder, instead of creating a new folder for the book. Requires --file-format to be set.", is_flag=True, default=False)
 # ▒ file format switches ↓
 # ▒▒ raw
 @click.option('--audio/--no-audio', help="Download audio", default=True)
@@ -127,6 +148,10 @@ def download_book(
 def main(**kwargs):
     languages_to_download = [kwargs['language']] if kwargs['language'] else LANGUAGES  # default to all languages
     books_to_download = set()
+
+    if kwargs['direct'] and not kwargs['name_format']:
+        logging.error("Error: --direct requires --name-format to be set.")
+        return
 
     if kwargs['book_slug']:
         books_to_download.add(Book.from_slug(kwargs['book_slug']))

@@ -22,13 +22,13 @@ class Chapter:
         """
         return self.data
 
-    def download_audio(self, target_dir: Path) -> None:
+    def download_audio(self, target_dir: Path, file_name: str | None) -> None:
         if not self.data.get('signed_audio_url'):
             # NOTE: In books where is_audio is true, every chapter should have audio, so this should never happen.
             logging.warning(f'No audio for chapter {self.id}')
             return
 
-        file_path = target_dir / f"chapter_{self.data['order_no']}.m4a"
+        file_path = target_dir / f"{f'{file_name} ' if file_name else ''}chapter_{self.data['order_no']}.m4a"
 
         assert 'm4a' in self.data['signed_audio_url']
         download(self.data['signed_audio_url'], file_path)

@@ -6,9 +6,8 @@ import yaml
 
 from .chapter import Chapter
 from .common import api_request_web, download, request
-from .config import BASE_URL, FILENAME_COVER, FILENAME_RAW, FILENAME_TEXT
+from .config import BASE_URL, DEFAULT_FILENAME_COVER, DEFAULT_FILENAME_RAW, DEFAULT_FILENAME_TEXT
 from .console import track
-
 
 class Book:
     def __init__(self, book_data: dict) -> None:
@@ -17,8 +16,8 @@ class Book:
         # pylint: disable=C0103
         self.id = book_data['id']
         self.language = book_data['language']
-        self.slug = book_data['slug']
-        self.title = book_data['title']
+        self.slug: str = book_data['slug']
+        self.title: str = book_data['title']
         self.is_audio: bool = book_data['isAudio']
 
     def __repr__(self) -> str:
@@ -57,7 +56,7 @@ class Book:
         ]
         return chapters
 
-    def download_cover(self, target_dir: Path) -> None:
+    def download_cover(self, target_dir: Path, file_name: str | None) -> None:
         """
         Downloads the cover image to the given directory,
         in the highest resolution available.
@@ -70,12 +69,12 @@ class Book:
         # example: 'https://images.blinkist.io/images/books/617be9b56cee07000723559e/1_1/470.jpg' → 470
         url = sorted(urls, key=lambda x: int(x.split('/')[-1].rstrip('.jpg')), reverse=True)[0]
 
-        file_path = target_dir / f"{FILENAME_COVER}.jpg"
+        file_path = target_dir / f"{file_name or DEFAULT_FILENAME_COVER}.jpg"
 
         assert url.endswith('.jpg')
         download(url, file_path)
 
-    def download_text_md(self, target_dir: Path) -> None:
+    def download_text_md(self, target_dir: Path, file_name: str | None) -> None:
         """
         Downloads the text content as Markdown to the given directory.
         """
@@ -120,7 +119,7 @@ class Book:
 
         markdown_text = "\n\n\n".join(parts)
 
-        file_path = target_dir / f"{FILENAME_TEXT}.md"
+        file_path = target_dir / f"{file_name or DEFAULT_FILENAME_TEXT}.md"
         file_path.write_text(markdown_text, encoding='utf-8')
 
     def serialize(self) -> dict:
@@ -135,11 +134,11 @@ class Book:
             ],
         }
 
-    def download_raw_yaml(self, target_dir: Path) -> None:
+    def download_raw_yaml(self, target_dir: Path, file_name: str | None) -> None:
         """
         Downloads the raw YAML to the given directory.
         """
-        file_path = target_dir / f"{FILENAME_RAW}.yaml"
+        file_path = target_dir / f"{file_name or DEFAULT_FILENAME_RAW}.yaml"
         file_path.write_text(
             yaml.dump(
                 self.serialize(),
