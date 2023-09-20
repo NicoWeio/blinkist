@@ -132,12 +132,6 @@ def download_book(
 @click.option('--trending', help="Download trending books. Limited to 8 results by default. Use --limit to override.", is_flag=True, default=False)
 # ▒▒ meta
 @click.option('--limit', help="Limit the number of books to download. Defaults to no limit.", type=int, default=None)
-@click.option('--name-format', '-n', help='''Sets file names format. By default no format is set, and generic names from `config.py` are used. Supported values:
-    - "slug": Book title slug (e.g. "the-4-hour-workweek")
-    - "title": Book title (e.g. "The 4-Hour Workweek")
-    - "title-upper": Book title in uppercase (e.g. "THE 4-HOUR WORKWEEK")
-    - "id": Book ID (e.g. "617be9b56cee07000723559e")''', type=str, default=None)
-@click.option('--direct', help="Save directly in parent folder, instead of creating a new folder for the book. Requires --file-format to be set.", is_flag=True, default=False)
 # ▒ file format switches ↓
 # ▒▒ raw
 @click.option('--audio/--no-audio', help="Download audio", default=True)
@@ -145,6 +139,13 @@ def download_book(
 @click.option('--yaml/--no-yaml', help="Save content as YAML", default=True)
 # ▒▒ processed
 @click.option('--markdown/--no-markdown', help="Save content as Markdown", default=True)
+# ▒▒ output format
+@click.option('--name-format', '-n', help='''Sets the format for output file names. By default no format is set, and generic names from config.py are used. Supported values:
+    - "slug": Book title slug (e.g. "the-4-hour-workweek")
+    - "title": Book title (e.g. "The 4-Hour Workweek")
+    - "title-upper": Book title in uppercase (e.g. "THE 4-HOUR WORKWEEK")
+    - "id": Book ID (e.g. "617be9b56cee07000723559e")''', type=str, default=None)
+@click.option('--direct', help="Saves files directly in the parent folder, instead of creating a new folder for the book. Requires --file-format to be set.", is_flag=True, default=False)
 def main(**kwargs):
     languages_to_download = [kwargs['language']] if kwargs['language'] else LANGUAGES  # default to all languages
     books_to_download = set()
