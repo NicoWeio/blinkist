@@ -97,14 +97,17 @@ def download_book(
     except Exception as e:
         logging.error(f"Error downloading “{book.title}”: {e}")
 
-        error_dir = book_dir.parent / f"{book.slug} – ERROR"
-        i = 0
-        while error_dir.exists() and any(error_dir.iterdir()):
-            i += 1
-            error_dir = book_dir.parent / f"{book.slug} – ERROR ({i})"
+        if not direct:
+            error_dir = book_dir.parent / f"{book.slug} – ERROR"
+            i = 0
+            while error_dir.exists() and any(error_dir.iterdir()):
+                i += 1
+                error_dir = book_dir.parent / f"{book.slug} – ERROR ({i})"
 
-        book_dir.replace(target=error_dir)
-        logging.warning(f"Renamed output directory to “{error_dir.relative_to(book_dir.parent)}”")
+            book_dir.replace(target=error_dir)
+            logging.warning(f"Renamed output directory to “{error_dir.relative_to(book_dir.parent)}”")
+        else:
+            logging.warning(f"Leaving output directory as “{book_dir.relative_to(book_dir.parent)}” because --direct was set.")
 
         if continue_on_error:
             logging.info("Continuing with next book… (--continue-on-error was set)")
