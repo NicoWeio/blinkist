@@ -1,5 +1,5 @@
 click~=8.1.7
 cloudscraper~=1.2.71
 pyyaml~=6.0
-rich~=13.5.3
+rich~=13.6.0
 tenacity~=8.2.3
