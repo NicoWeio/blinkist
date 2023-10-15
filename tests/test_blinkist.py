@@ -12,14 +12,14 @@ def test_get_free_daily():
 def test_get_latest_books():
     books = blinkist.get_latest_books()
     assert len(books) > 0
-    assert len(books) <= 8  # NOTE: We use <= becauase search_books filters out non-book results.
+    assert len(books) <= 8  # NOTE: We use <= because search_books filters out non-book results.
     assert books[0].title
 
 
 def test_get_trending_books():
     books = blinkist.get_trending_books()
     assert len(books) > 0
-    assert len(books) <= 8  # NOTE: We use <= becauase search_books filters out non-book results.
+    assert len(books) <= 8  # NOTE: We use <= because search_books filters out non-book results.
     assert books[0].title
 
 
@@ -38,7 +38,7 @@ class TestSearchBooks:
 
     def test_limit(self):
         books = blinkist.search_books("smart", limit=5)
-        assert len(books) <= 5  # NOTE: We use <= becauase search_books filters out non-book results.
+        assert len(books) <= 5  # NOTE: We use <= because search_books filters out non-book results.
 
     def test_languages(self):
         books = blinkist.search_books("smart", limit=10)

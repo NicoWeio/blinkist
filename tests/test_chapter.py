@@ -1,12 +1,15 @@
 import pytest
 
+from blinkist import blinkist
 from blinkist.book import Book
 from blinkist.chapter import Chapter
 
-book = Book.from_slug('get-smart-en')
+# book = Book.from_slug('get-smart-en')
+book = blinkist.get_free_daily('en')
 chapter = book.chapters[0]
 
 
+@pytest.mark.skip(reason="Requires Blinkist Premium.")
 def test_from_id():
     chapter = Chapter.from_id(book, '58da6e44232de90004a6e66d')
     assert chapter.data['text']

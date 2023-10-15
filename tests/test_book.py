@@ -1,17 +1,13 @@
-from blinkist.book import Book
+import pytest
+
+from blinkist import blinkist
 from blinkist.chapter import Chapter
 
-# def test___init__():
-
-# def test___repr__():
-
-# def test___hash__():
-
-# def test___eq__():
-
-book = Book.from_slug('get-smart-en')
+# book = Book.from_slug('get-smart-en')
+book = blinkist.get_free_daily('en')
 
 
+@pytest.mark.skip(reason="Requires Blinkist Premium.")
 def test_from_slug():
     # ↓ book-specific
     assert book.title == "Get Smart!"
@@ -28,7 +24,7 @@ def test_chapters():
     assert all(chapter.data['text'] for chapter in book.chapters)
 
     # ↓ book-specific
-    assert len(book.chapters) == 1+9+1
+    # assert len(book.chapters) == 1+9+1
 
 
 def test_download_cover(tmp_path):

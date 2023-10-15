@@ -58,10 +58,10 @@ jobs:
       - name: Test `--freedaily`
         run: |
           python main.py --freedaily /home/runner/Musik/Blinkist/
-      # NOTE: The following should require a paid plan, but doesn't. Let's see for how much longer it works.
-      - name: Test `--book-slug`
-        run: |
-          python main.py --book-slug get-smart-en /home/runner/Musik/Blinkist/
+      # NOTE: The following requires Blinkist Premium.
+      # - name: Test `--book-slug`
+      #   run: |
+      #     python main.py --book-slug get-smart-en /home/runner/Musik/Blinkist/
       - name: Check the directory contents
         run: |
           ls -hl /home/runner/Musik/Blinkist/*
