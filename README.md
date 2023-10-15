@@ -1,3 +1,8 @@
+> [!IMPORTANT]
+> This is a work-in-progress branch where session cookies are automatically imported from Firefox.
+> It's not merged yet because I want to add support for other browsers and cookie files first, which also requires some refactoring.
+> I don't remember why I didn't use _BrowserCookie3_, but I guess there was a good reason.
+
 # About this repository
 
 ## Features
