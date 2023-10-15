@@ -19,11 +19,15 @@ To be precise, it saves…
 
 ### Book selection
 - `--book-slug`: the book slug (e.g. `get-smart-en`)
-  - ⚠️ As of writing, no authentication is required to access _any_ book, a benefit which _should_ require a subscription _in theory_. Do consider the legal and moral implications of using this.
 - `--freedaily`: Each day, Blinkist offers a free book for each locale.
   - [Website (en)](https://www.blinkist.com/en/content/daily)
 - Further options include `--book-slug`, `--latest`, `--latest-collections`, `--search`, and `--trending`. Refer to `main.py --help` for more information.
 - 🛈 If you pass multiple of these options, all of them will be used.
+
+> [!IMPORTANT]
+> It seems like Blinkist now prevents unauthorized access to books.
+> If you have a Blinkist Premium account, check out the [`feature/import-session`](https://github.com/NicoWeio/blinkist/tree/feature/import-session) branch.
+
 
 ## Installation
 
