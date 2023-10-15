@@ -40,14 +40,20 @@ def download_book(
     # This comes first so we can fail early if the path doesn't exist.
     assert library_dir.exists()
 
-    # setup book directory
-    # book_dir = library_dir / f"{datetime.today().strftime('%Y-%m-%d')} – {book.slug}"
+    # set up final book directory
     book_dir = library_dir / book.slug
     if book_dir.exists() and not redownload:
         logging.info(f"Skipping “{book.title}” – already downloaded.")
         # TODO: this doss not check if the download was complete! Can we do something about that
         return
-    book_dir.mkdir(exist_ok=True)  # We don't make parents in order to avoid user error.
+
+    # set up temporary book directory
+    book_tmp_dir = book_dir.parent / f"{book.slug}.tmp"
+    i = 0
+    while book_tmp_dir.exists():
+        i += 1
+        book_tmp_dir = book_dir.parent / f"{book.slug}.tmp{i}"
+    book_tmp_dir.mkdir()  # We don't make parents in order to avoid user error.
 
     try:
         # prefetch chapter_list and chapters for nicer progress info
@@ -60,36 +66,32 @@ def download_book(
         # This comes first so we have all information saved as early as possible.
         if yaml:
             with status("Downloading raw YAML…"):
-                book.download_raw_yaml(book_dir)
+                book.download_raw_yaml(book_tmp_dir)
 
         # download text (Markdown)
         if markdown:
             with status("Downloading text…"):
-                book.download_text_md(book_dir)
+                book.download_text_md(book_tmp_dir)
 
         # download audio
         if audio:
             if book.is_audio:
                 for chapter in track(book.chapters, description="Downloading audio…"):
-                    chapter.download_audio(book_dir)
+                    chapter.download_audio(book_tmp_dir)
             else:
                 logging.warning("This book has no audio.")
 
         # download cover
         if cover:
             with status("Downloading cover…"):
-                book.download_cover(book_dir)
+                book.download_cover(book_tmp_dir)
+
+        # move tmp dir to final dir
+        assert not book_dir.exists()  # in case it was created by another process
+        book_tmp_dir.rename(book_dir)
     except Exception as e:
         logging.error(f"Error downloading “{book.title}”: {e}")
-
-        error_dir = book_dir.parent / f"{book.slug} – ERROR"
-        i = 0
-        while error_dir.exists() and any(error_dir.iterdir()):
-            i += 1
-            error_dir = book_dir.parent / f"{book.slug} – ERROR ({i})"
-
-        book_dir.replace(target=error_dir)
-        logging.warning(f"Renamed output directory to “{error_dir.relative_to(book_dir.parent)}”")
+        logging.info(f"Keeping temporary output directory “{book_tmp_dir.name}”")
 
         if continue_on_error:
             logging.info("Continuing with next book… (--continue-on-error was set)")
