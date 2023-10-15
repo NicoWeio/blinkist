@@ -14,6 +14,7 @@ CLOUDFLARE_WAIT_TIME = 2
 
 LANGUAGES = ['en', 'de']
 
-FILENAME_COVER = "cover"
-FILENAME_TEXT = "book"
-FILENAME_RAW = "book"
+# Default names for downloaded files if --name-format is not specified.
+DEFAULT_FILENAME_COVER = "cover"
+DEFAULT_FILENAME_TEXT = "book"
+DEFAULT_FILENAME_RAW = "book"
