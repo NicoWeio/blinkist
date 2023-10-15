@@ -6,11 +6,13 @@ import tenacity
 
 from .config import CLOUDFLARE_MAX_ATTEMPTS, CLOUDFLARE_WAIT_TIME, HEADERS
 from .console import track
-from .helpers.import_session import import_session
+from .helpers.import_session import import_session_or_none
 
 scraper = cloudscraper.create_scraper()
 
-session_cookies = import_session()
+session_cookies = import_session_or_none()
+if session_cookies:
+    print("INFO: Using session cookies.")  # TODO: can't use logging here because it's not initialized yet
 
 
 @tenacity.retry(

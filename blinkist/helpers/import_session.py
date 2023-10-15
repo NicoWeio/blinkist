@@ -16,7 +16,7 @@ def get_cookiefile():
     }.get(system(), "~/.mozilla/firefox/*/cookies.sqlite")
     cookiefiles = glob(expanduser(default_cookiefile))
     if not cookiefiles:
-        raise SystemExit("No Firefox cookies.sqlite file found.")
+        raise RuntimeError("No Firefox cookies.sqlite file found.")
     return cookiefiles[0]
 
 
@@ -46,3 +46,10 @@ def import_session():
         }
     except KeyError as e:
         raise RuntimeError("Could not find session cookie in Firefox cookies.sqlite file.") from e
+
+
+def import_session_or_none():
+    try:
+        return import_session()
+    except RuntimeError:
+        return None
