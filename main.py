@@ -6,8 +6,8 @@ import click
 from rich.logging import RichHandler
 
 from blinkist.blinkist import (get_free_daily, get_latest_books,
-                               get_latest_collections, get_trending_books,
-                               search_books)
+                               get_latest_collections, get_me,
+                               get_trending_books, search_books)
 from blinkist.book import Book  # typing only
 from blinkist.config import LANGUAGES
 from blinkist.console import console, status, track, track_context
@@ -107,6 +107,7 @@ def download_book(
 # ▒ general options ↓
 @click.option('--continue-on-error', '-c', help="Continue downloading the next book after an error.", is_flag=True, default=False)
 @click.option('--language', '-l', help="Language to download content in. Other languages will be skipped. Defaults to all languages.", type=click.Choice(LANGUAGES), default=None)
+@click.option('--logincheck/--no-logincheck', help="Whether to check for successful login before any operations.", is_flag=True, default=True)
 # FIXME: Invocations with --no-download shouldn't need the library_dir argument
 @click.option('--no-download', '-n', help="Don't actually save anything, just print what would be downloaded.", is_flag=True, default=False)
 @click.option('--redownload', '-r', help="Redownload all files, even if they already exist. Otherwise, skip all downloads if the book directory exists. Incomplete downloads won't be completed!", is_flag=True, default=False)
@@ -129,6 +130,13 @@ def download_book(
 def main(**kwargs):
     languages_to_download = [kwargs['language']] if kwargs['language'] else LANGUAGES  # default to all languages
     books_to_download = set()
+
+    if kwargs['logincheck']:
+        try:
+            get_me()
+        except Exception as e:
+            logging.critical(f"You are not logged in, but --logincheck was passed. Check that you are logged in in your browser or pass --no-login.")
+            raise
 
     if kwargs['book_slug']:
         books_to_download.add(Book.from_slug(kwargs['book_slug']))
