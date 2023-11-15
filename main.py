@@ -48,11 +48,11 @@ def download_book(
         return
 
     # set up temporary book directory
-    book_tmp_dir = book_dir.parent / f"{book.slug}.tmp"
+    book_tmp_dir = book_dir.parent / f"{book_dir.name}.tmp"
     i = 0
     while book_tmp_dir.exists():
         i += 1
-        book_tmp_dir = book_dir.parent / f"{book.slug}.tmp{i}"
+        book_tmp_dir = book_dir.parent / f"{book_dir.name}.tmp{i}"
     book_tmp_dir.mkdir()  # We don't make parents in order to avoid user error.
 
     try:
