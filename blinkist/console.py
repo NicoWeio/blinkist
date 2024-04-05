@@ -18,7 +18,12 @@ def track(iterable, description="Working...", total=None):
     """
     An alternative to rich.progress.track that allows multiple progress bars to be displayed at once.
     """
-    my_job = _job_progress.add_task(description, total=(total or len(iterable)))
+    try:
+        total = total or len(iterable)
+    except TypeError:
+        total = None
+
+    my_job = _job_progress.add_task(description, total=total)
     for i in iterable:
         yield i
         _job_progress.update(my_job, advance=1)
