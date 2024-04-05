@@ -44,16 +44,21 @@ def download_book(
     book_dir = library_dir / book.slug
     if book_dir.exists() and not redownload:
         logging.info(f"Skipping “{book.title}” – already downloaded.")
-        # TODO: this doss not check if the download was complete! Can we do something about that
+        # TODO: This doss not check if the download was complete! Can we do something about that?
         return
 
-    # set up temporary book directory
-    book_tmp_dir = book_dir.parent / f"{book.slug}.tmp"
-    i = 0
-    while book_tmp_dir.exists():
-        i += 1
-        book_tmp_dir = book_dir.parent / f"{book.slug}.tmp{i}"
-    book_tmp_dir.mkdir()  # We don't make parents in order to avoid user error.
+    if not redownload:
+        # set up temporary book directory
+        book_tmp_dir = book_dir.parent / f"{book.slug}.tmp"
+        i = 0
+        while book_tmp_dir.exists():
+            i += 1
+            book_tmp_dir = book_dir.parent / f"{book.slug}.tmp{i}"
+        book_tmp_dir.mkdir()  # We don't make parents in order to avoid user error.
+    else:
+        # Work right in the (existing) final directory.
+        # This way, we never have to explicitly delete anything.
+        book_tmp_dir = book_dir
 
     try:
         # prefetch chapter_list and chapters for nicer progress info
@@ -86,9 +91,10 @@ def download_book(
             with status("Downloading cover…"):
                 book.download_cover(book_tmp_dir)
 
-        # move tmp dir to final dir
-        assert not book_dir.exists()  # in case it was created by another process
-        book_tmp_dir.rename(book_dir)
+        if not redownload:
+            # move tmp dir to final dir
+            assert not book_dir.exists()  # in case it was created by another process
+            book_tmp_dir.rename(book_dir)
     except Exception as e:
         logging.error(f"Error downloading “{book.title}”: {e}")
         logging.info(f"Keeping temporary output directory “{book_tmp_dir.name}”")
