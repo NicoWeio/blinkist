@@ -1,5 +1,6 @@
 click~=8.1.7
 cloudscraper~=1.2.71
+curl_cffi~=0.14.0
 pyyaml~=6.0
 rich~=13.7.1
 tenacity~=8.3.0
