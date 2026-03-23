@@ -1,17 +1,31 @@
 import logging
 from pathlib import Path
 
-import cloudscraper
 import tenacity
 
 from .config import CLOUDFLARE_MAX_ATTEMPTS, CLOUDFLARE_WAIT_TIME, HEADERS
 from .console import track
 
-scraper = cloudscraper.create_scraper()
+try:
+    from curl_cffi import requests as curl_requests
+    _USE_CURL_CFFI = True
+except ImportError:
+    import cloudscraper
+    _USE_CURL_CFFI = False
+
+
+class CloudflareChallengeError(Exception):
+    pass
+
+
+if _USE_CURL_CFFI:
+    scraper = curl_requests.Session(impersonate="chrome")
+else:
+    scraper = cloudscraper.create_scraper()
 
 
 @tenacity.retry(
-    retry=tenacity.retry_if_exception_type(cloudscraper.exceptions.CloudflareChallengeError),
+    retry=tenacity.retry_if_exception_type(CloudflareChallengeError),
     wait=tenacity.wait_fixed(CLOUDFLARE_WAIT_TIME),
     stop=tenacity.stop_after_attempt(CLOUDFLARE_MAX_ATTEMPTS),
     before_sleep=lambda retry_state: logging.info(f"Retrying in {retry_state.next_action.sleep} seconds…"),
@@ -21,15 +35,16 @@ def request(url, **kwargs):
     Wrapper for verifying and retrying GET requests.
     """
     kwargs.setdefault('headers', HEADERS)
-    response = scraper.get(url, **kwargs)
+    if _USE_CURL_CFFI:
+        stream = kwargs.pop('stream', False)
+        response = scraper.get(url, stream=stream, **kwargs)
+    else:
+        response = scraper.get(url, **kwargs)
 
-    # handle Cloudflare errors
-    # We don't check the reponse content here; it could be large binary data and slow things down.
     if response.status_code == 403:
-        # TODO: reset scraper for the next try?
-        raise cloudscraper.exceptions.CloudflareChallengeError()
+        raise CloudflareChallengeError()
 
-    response.raise_for_status()  # handle other errors
+    response.raise_for_status()
     return response
 
 
